@@ -4,6 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+# danubeoccurR <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 A short description of what your package does and how it helps users.
 
