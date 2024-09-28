@@ -13,7 +13,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' species_name <-  c("Species A", "Species B", "Species C")
+#' # Try changing to correct names: Chondrostoma nasus, Hucho hucho,
+#' # Anguilla anguilla
+#' species_name <- c("Chondrostoma nasus", "Hucho hucho", "Anguilla anguilla")
 #' updated_data <- update_name_app(species_name)
 #' }
 #'

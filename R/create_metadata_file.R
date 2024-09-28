@@ -7,6 +7,7 @@
 #' @param author The name of the author or creator of the file.
 #' @param creation_date The date when the file was created (default is the current date).
 #' @param notes Any additional notes about the file.
+#' @param source A URL or reference for the source of the data.
 #' @param metadata_folder Optional. The folder where the metadata file should be saved (default is the folder of the original file).
 #' @return The path to the created metadata file.
 #' @export
@@ -15,12 +16,14 @@
 #' metadata_file <- create_metadata_file("data/my_file.csv",
 #'                                         description = "This file contains sample data.",
 #'                                         author = "Jane Doe",
+#'                                         source = "https://example.com/data-source",
 #'                                         notes = "Data collected from various sources.")
 create_metadata_file <- function(file_path,
                                  description,
                                  author,
                                  creation_date = Sys.Date(),
                                  notes = NULL,
+                                 source = NULL,
                                  metadata_folder = dirname(file_path)) {
 
   # Check if the specified file exists
@@ -34,6 +37,7 @@ create_metadata_file <- function(file_path,
     "Description:", description, "\n",
     "Author:", author, "\n",
     "Creation Date:", creation_date, "\n",
+    "Source:", ifelse(is.null(source), "None", source), "\n",
     "Notes:", ifelse(is.null(notes), "None", notes), "\n"
   )
 
