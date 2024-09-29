@@ -29,13 +29,14 @@
 #' polygon_path <- system.file("extdata", "danube_basin.gpkg", package = "yourPackageName")
 #'
 #' # Convert the polygon to WKT format using the `get_wkt` function from your package
-#' wkt <- get_wkt(danube_basin)
+#' wkt <- get_wkt(bbox_danube_basin)
 #'
 #' # Download occurrences for species of interest
+#' output_occur_path <- "./downloaded_records"
 #' gbif_data <- download_gbif_records(
 #'   species_names = c("Hucho hucho", "Alburnoides bipunctatus", "Chondrostoma nasus"),
 #'   wkt = wkt,
-#'   output_occur_path = "./downloaded_records",
+#'   output_occur_path = output_occur_path,
 #'   gbif_user = "your_username",
 #'   gbif_pwd = "your_password",
 #'   gbif_email = "your_email@example.com",
@@ -44,8 +45,16 @@
 #'
 #' # Access the downloaded records
 #' occurrence_records <- gbif_data$raw_download
+#'
 #' # Access the GBIF citation
 #' gbif_citation <- gbif_data$gbif_download_citation
+#'
+#' # Create a metadata file for the downloaded records
+#' create_metadata_file(file_path = paste0(output_occur_path,"file_name.zip"),
+#' description = "This file contains fish species occurrences from GBIF",
+#' author = "Your Name",
+#' author_email = "your_email@example.com",
+#' source = gbif_citation)
 
 download_gbif_records <- function(species_names, wkt, output_occur_path,
                                   gbif_user, gbif_pwd, gbif_email, import_to_r = TRUE) {

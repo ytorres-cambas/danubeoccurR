@@ -21,6 +21,7 @@
 create_metadata_file <- function(file_path,
                                  description,
                                  author,
+                                 author_email = NULL,
                                  creation_date = Sys.Date(),
                                  notes = NULL,
                                  source = NULL,
@@ -36,6 +37,7 @@ create_metadata_file <- function(file_path,
     "File Name:", basename(file_path), "\n",
     "Description:", description, "\n",
     "Author:", author, "\n",
+    "Author's email:", ifelse(is.null(author_email), "None", author_email), "\n",
     "Creation Date:", creation_date, "\n",
     "Source:", ifelse(is.null(source), "None", source), "\n",
     "Notes:", ifelse(is.null(notes), "None", notes), "\n"
@@ -49,5 +51,7 @@ create_metadata_file <- function(file_path,
   writeLines(metadata_content, metadata_file_path)
 
   # Return the path to the created metadata file
+  print(paste0("Metadata file for ", basename(file_path),
+               " created at ", metadata_file_path))
   return(metadata_file_path)
 }
