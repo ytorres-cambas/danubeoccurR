@@ -20,7 +20,8 @@ Imports:
     sf,
     shiny,
     specleanr (>= 0.1.0),
-    terra
+    terra,
+    CoordinateCleaner
 Remotes: 
     AnthonyBasooma/specleanr
 Depends: 
