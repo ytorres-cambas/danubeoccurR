@@ -38,8 +38,8 @@ snap_points_on_map <- function(coords_df) {
     miniUI::gadgetTitleBar("Drag Points to Update Coordinates"),
     miniUI::miniContentPanel(
       leaflet::leafletOutput("map", width = "100%", height = "600px"),
-      fileInput("file", "Upload Raster/Vector File (GeoTIFF/GeoPackage)", accept = c(".tif", ".gpkg")),
-      tags$style(HTML("#file {margin-top: 10px;}"))
+      shiny::fileInput("file", "Upload Raster/Vector File (GeoTIFF/GeoPackage)", accept = c(".tif", ".gpkg")),
+      shiny::tags$style(shiny::HTML("#file {margin-top: 10px;}"))
     )
   )
 
