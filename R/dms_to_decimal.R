@@ -6,7 +6,7 @@
 #'
 #' @param data A data frame containing either separate columns for degrees, minutes, and seconds,
 #' or a single column with DMS formatted values for latitude and longitude.
-#' @param lat_col The name of the column representing latitude. It can either be a single column with DMS notation or separate columns for degrees.
+#' @param lat_col The name of the column representing latitude or vector. It can either be a single column with DMS notation or separate columns for degrees.
 #' @param lon_col The name of the column representing longitude. It can either be a single column with DMS notation or separate columns for degrees.
 #' @param is_dms_symbol If TRUE (default), assumes the latitude and longitude columns are in DMS notation with symbols (e.g., `34°30'45"N`).
 #' @param verbose Logical. If `TRUE`, prints messages about the conversion process. Default is `FALSE`.
@@ -33,7 +33,11 @@
 #' result <- dms_to_decimal(data, "lat_deg", "lon_deg", is_dms_symbol = FALSE)
 #' print(result)
 
-dms_to_decimal <- function(data, lat_col, lon_col, is_dms_symbol = TRUE, verbose = FALSE) {
+dms_to_decimal <- function(data,
+                           lat_col,
+                           lon_col,
+                           is_dms_symbol = TRUE,
+                           verbose = FALSE) {
   # Function to convert DMS string to decimal degrees
   dms_to_dd <- function(dms) {
     # Extract components using regex
