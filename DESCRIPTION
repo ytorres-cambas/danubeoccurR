@@ -21,7 +21,8 @@ Imports:
     shiny,
     specleanr (>= 0.1.0),
     terra,
-    CoordinateCleaner
+    CoordinateCleaner,
+    magrittr
 Remotes: 
     AnthonyBasooma/specleanr
 Depends: 

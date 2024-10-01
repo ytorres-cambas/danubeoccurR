@@ -11,20 +11,29 @@
 #' @param lon_col The name of the column in `data` representing longitude.
 #' @param crs The CRS (Coordinate Reference System) to ensure consistency between the polygon and coordinates. Default is WGS84 (`EPSG:4326`).
 #' @param verbose Logical. If `TRUE`, prints detailed messages. Default is `FALSE`.
+#'
 #' @return A data frame containing only the rows of the original data frame where
 #' the coordinates fall within the polygon.
+#'
 #' @importFrom sf st_as_sf st_transform st_crs st_within
 #' @importFrom dplyr filter
+#'
 #' @export
+#'
 #' @examples
-#' library(sf)
 #' # Example polygon and data
-#' polygon <- st_as_sf(data.frame(id = 1),
-#'                     wkt = "POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))",
-#'                     crs = 4326)
-#' data <- data.frame(lat = c(0, 45, 90), lon = c(0, 120, -120))
-#' filtered_data <- spatial_filter(polygon, data, "lat", "lon", verbose = TRUE)
-spatial_filter <- function(polygon, data, lat_col, lon_col, crs = 4326, verbose = FALSE) {
+#' polygon <- danube_basin
+#' data <- fish_data
+#' filtered_data <- get_spatial_subset(polygon,
+#'                                     data,
+#'                                     "decimalLatitude",
+#'                                     "decimalLongitude",
+#'                                     verbose = TRUE)
+#'
+#' # Map with points that fall within the polygon
+#'
+
+get_spatial_subset <- function(polygon, data, lat_col, lon_col, crs = 4326, verbose = FALSE) {
 
   # Check if the input is a data frame
   if (!is.data.frame(data)) {

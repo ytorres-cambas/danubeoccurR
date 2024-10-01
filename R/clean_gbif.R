@@ -28,7 +28,7 @@
 #'
 #' @return A cleaned data frame with species occurrences.
 #' @import CoordinateCleaner
-#' @import dplyr
+#' @importFrom dplyr %>%
 #' @examples
 #' # Example usage
 #' df <- download_gbif_records(...)
