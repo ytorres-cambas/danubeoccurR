@@ -39,7 +39,8 @@ the polygon and the coordinates must match, and the default CRS is WGS84.
 \examples{
 # Example polygon and data
 polygon <- danube_basin
-data <- fish_data
+data <- fish_data_2 <- fish_data \%>\%
+select(species, decimalLatitude, decimalLongitude)
 filtered_data <- get_spatial_subset(polygon,
                                     data,
                                     "decimalLatitude",
@@ -47,5 +48,5 @@ filtered_data <- get_spatial_subset(polygon,
                                     verbose = TRUE)
 
 # Map with points that fall within the polygon
-
+visualize_points(filtered_data, layer = danube_basin, show_extra_columns = TRUE)
 }

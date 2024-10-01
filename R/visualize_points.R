@@ -30,7 +30,7 @@
 #' visualize_points(fish_data_2, show_extra_columns = TRUE)
 #'
 #' # Example with additional vector layer
-#' # visualize_points(fish_data_2, layer = danube_basin, show_extra_columns = TRUE)
+#' visualize_points(fish_data_2, layer = danube_basin, show_extra_columns = TRUE)
 #'
 #' @export
 visualize_points <- function(points_df,
