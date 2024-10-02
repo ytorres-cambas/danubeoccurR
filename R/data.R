@@ -70,8 +70,6 @@
 #'   \item{speciesKey}{The GBIF taxonomic key for the species.}
 #'   \item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).
 #'   }
-#
-
 #'
 #' @source <https://www.gbif.org/>
 "fish_data"

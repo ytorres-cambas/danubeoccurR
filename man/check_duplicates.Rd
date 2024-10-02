@@ -10,18 +10,15 @@ check_duplicates(
   lon_col,
   subcatchment_col,
   species_col,
-  year_col = NULL,
-  day_col = NULL,
-  month_col = NULL,
-  date_col = NULL,
+  year_col,
   delete_duplicates = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
 \item{data}{A data frame containing columns for latitude, longitude,
-sub-catchment ID, and species name. Additionally, it can contain columns for
-date in various formats.}
+sub-catchment ID, and species name. Additionally, it must contain a column for
+the year.}
 
 \item{lat_col}{The name of the column representing latitude.}
 
@@ -31,13 +28,7 @@ date in various formats.}
 
 \item{species_col}{The name of the column representing species name.}
 
-\item{year_col}{Optional. The name of the column representing the year (if date is year only).}
-
-\item{day_col}{Optional. The name of the column representing the day (if date is split into day/month/year).}
-
-\item{month_col}{Optional. The name of the column representing the month (if date is split into day/month/year).}
-
-\item{date_col}{Optional. The name of the column representing a full date in the form dd/mm/yyyy.}
+\item{year_col}{The name of the column representing the year (mandatory).}
 
 \item{delete_duplicates}{Logical. If \code{TRUE} (default), only one record is
 kept for each group of duplicates. If \code{FALSE}, a new column is added to flag duplicates.}
@@ -46,20 +37,17 @@ kept for each group of duplicates. If \code{FALSE}, a new column is added to fla
 Default is \code{FALSE}.}
 }
 \value{
-Returns a data frame with either duplicates removed or flagged.
+Returns a data frame with either duplicates removed or flagged,
+along with a summary of the number of rows with changes.
 }
 \description{
 This function checks for duplicate records based on latitude, longitude,
-sub-catchment ID, and species name. The date can be provided as either:
-\enumerate{
-\item A single column representing the year
-\item Three columns for day, month, and year
-\item A single column in the format dd/mm/yyyy.
-}
+sub-catchment ID, and species name. The date can be provided as a single column
+representing the year.
 }
 \details{
 Duplicates are defined as multiple entries for the same species recorded at
-the same location (same coordinates or sub-catchment ID) on the same date.
+the same location (same coordinates or sub-catchment ID) in the same year.
 }
 \examples{
 data <- data.frame(
@@ -69,6 +57,13 @@ data <- data.frame(
   year = c(2021, 2021, 2021, 2021),
   species = c("Species A", "Species A", "Species B", "Species B")
 )
-result <- check_duplicates(data, "latitude", "longitude", "subcatchment_id", "species", year_col = "year", delete_duplicates = FALSE, verbose = TRUE)
+result <- check_duplicates(data,
+                           "latitude",
+                           "longitude",
+                           "subcatchment_id",
+                           "species",
+                           year_col = "year",
+                           delete_duplicates = FALSE,
+                           verbose = TRUE)
 print(result)
 }
