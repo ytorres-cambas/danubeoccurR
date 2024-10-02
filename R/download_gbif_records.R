@@ -22,7 +22,7 @@
 #' @export
 #'
 #' @importFrom rgbif name_backbone_checklist occ_download occ_download_wait occ_download_get occ_download_import gbif_citation
-#' @importFrom dplyr |> filter
+#' @import  dplyr
 #'
 #' @examples
 #' # Define the path to the polygon file included in the package
