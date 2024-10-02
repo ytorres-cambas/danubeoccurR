@@ -22,7 +22,8 @@ Imports:
     specleanr (>= 0.1.0),
     terra,
     CoordinateCleaner,
-    magrittr
+    magrittr,
+    lubridate
 Remotes: 
     AnthonyBasooma/specleanr
 Depends: 

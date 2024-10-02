@@ -7,7 +7,7 @@
 check_year_column(
   df,
   col_year,
-  year_range = c(1900, 2024),
+  year_range = c(1800, 2024),
   transform_numeric = TRUE
 )
 }
@@ -27,6 +27,8 @@ A list containing:
 \itemize{
 \item \code{missing_values}: Indices of missing values in the year column.
 \item \code{invalid_years}: Indices of values that fall outside the valid year range.
+\item \code{updated_df}: A data frame with the updated year values and a flag indicating
+whether the values were transformed.
 }
 }
 \description{
@@ -37,5 +39,5 @@ non-numeric values to numeric.
 }
 \examples{
 df <- data.frame(year = c("2001", "2005", NA, "two thousand and ten", "2018", "2050"))
-check_year_column(df, "year", year_range = c(1900, 2024))
+result <- check_year_column(df, "year", year_range = c(1800, 2024))
 }

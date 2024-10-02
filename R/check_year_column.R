@@ -15,12 +15,14 @@
 #' \itemize{
 #'   \item `missing_values`: Indices of missing values in the year column.
 #'   \item `invalid_years`: Indices of values that fall outside the valid year range.
+#'   \item `updated_df`: A data frame with the updated year values and a flag indicating
+#' whether the values were transformed.
 #' }
 #' @examples
 #' df <- data.frame(year = c("2001", "2005", NA, "two thousand and ten", "2018", "2050"))
-#' check_year_column(df, "year", year_range = c(1900, 2024))
+#' result <- check_year_column(df, "year", year_range = c(1800, 2024))
 #' @export
-check_year_column <- function(df, col_year, year_range = c(1900, 2024), transform_numeric = TRUE) {
+check_year_column <- function(df, col_year, year_range = c(1800, 2024), transform_numeric = TRUE) {
   # Check if input is a data frame
   if (!is.data.frame(df)) {
     stop("The 'df' parameter must be a data frame.")
@@ -37,9 +39,19 @@ check_year_column <- function(df, col_year, year_range = c(1900, 2024), transfor
   # Check for missing values
   missing_values <- which(is.na(year_col))
 
+  # Initialize a flag for transformed values
+  transformed_flag <- rep(FALSE, length(year_col))
+
   # Check if transformation to numeric is requested
   if (transform_numeric) {
-    year_col <- suppressWarnings(as.numeric(year_col))
+    # Attempt to convert to numeric
+    transformed_year_col <- suppressWarnings(as.numeric(year_col))
+
+    # Set the flag to TRUE where transformation occurred
+    transformed_flag[is.na(year_col) & !is.na(transformed_year_col)] <- TRUE
+
+    # Replace the original year column with the transformed values
+    year_col[is.na(year_col)] <- transformed_year_col[is.na(year_col)]
   }
 
   # Check if the column is numeric after conversion (or initially)
@@ -50,13 +62,15 @@ check_year_column <- function(df, col_year, year_range = c(1900, 2024), transfor
   # Check for values outside the specified year range
   invalid_years <- which(year_col < year_range[1] | year_col > year_range[2])
 
+  # Create an updated data frame
+  updated_df <- df
+  updated_df[[col_year]] <- year_col
+  updated_df$transformed_flag <- transformed_flag
+
   # Return the results
   return(list(
     missing_values = missing_values,
-    invalid_years = invalid_years
+    invalid_years = invalid_years,
+    updated_df = updated_df
   ))
 }
-
-# Example usage:
-# df <- data.frame(year = c("2001", "2005", NA, "two thousand and ten", "2018", "2050"))
-# check_year_column(df, "year", year_range = c(1900, 2024))
