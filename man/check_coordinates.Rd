@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_coordinates.R
 \name{check_coordinates}
 \alias{check_coordinates}
-\title{Check Coordinates for WGS84 and Decimal Degrees}
+\title{Check Coordinates for WGS84 and Decimal Degrees and Convert to Numeric}
 \usage{
 check_coordinates(
   df,
@@ -28,10 +28,12 @@ and non-numeric coordinates. Default is \code{FALSE}.}
 \value{
 A list containing:
 \itemize{
+\item \code{df}: The updated data frame with latitude and longitude as numeric.
 \item \code{invalid_latitudes}: Indices of latitude values that are out of range or invalid.
 \item \code{invalid_longitudes}: Indices of longitude values that are out of range or invalid.
 \item \code{non_numeric_latitudes}: Indices of non-numeric latitude values (if any).
 \item \code{non_numeric_longitudes}: Indices of non-numeric longitude values (if any).
+\item \code{rows_changed}: Number of rows with changes after attempting conversion to numeric.
 }
 }
 \description{
@@ -39,11 +41,20 @@ This function checks if the coordinates in a data frame are in the WGS84
 format and in decimal degrees. It ensures that the latitude values are
 between -90 and 90, and the longitude values are between -180 and 180.
 If the \code{convert_to_numeric} parameter is \code{TRUE}, it attempts to convert
-non-numeric coordinates to numeric. It also prints detailed information
-if \code{verbose} is set to \code{TRUE}.
+non-numeric coordinates to numeric using \code{as.numeric()}. It also prints
+detailed information if \code{verbose} is set to \code{TRUE}, and returns the updated
+data frame with numeric coordinates.
 }
 \examples{
+# A data frame with coordinates
 df <- data.frame(latitude = c("45.5", "91", NA, "invalid", "12.5"),
                  longitude = c("-123.5", "200", "text", "-100", "55"))
-check_coordinates(df, "latitude", "longitude", convert_to_numeric = TRUE, verbose = TRUE)
+
+# A list with results
+list_result <- check_coordinates(df,
+ "latitude",
+ "longitude",
+ convert_to_numeric = TRUE,
+ verbose = TRUE)
+
 }

@@ -2,33 +2,44 @@
 % Please edit documentation in R/check_column_names.R
 \name{check_column_names}
 \alias{check_column_names}
-\title{Check Column Names of a Data Frame}
+\title{Check Data Frame Column Names Against Darwin Core Standard Terms}
 \usage{
-check_column_names(df, standard_names, verbose = FALSE)
+check_column_names(
+  df_input,
+  standard_terms = dwc_names,
+  verbose = TRUE,
+  merge = FALSE
+)
 }
 \arguments{
-\item{df}{A data frame to be checked.}
+\item{df_input}{A data frame or a list of data frames to check.}
 
-\item{standard_names}{A character vector containing the standard column names.}
+\item{standard_terms}{A character vector containing the standard column names (default is \code{dwc_names}).}
 
-\item{verbose}{Logical. If \code{TRUE}, prints the missing and extra columns.}
+\item{verbose}{A logical value indicating whether to output the columns that do not match the standard terms (default is TRUE).}
+
+\item{merge}{A logical value indicating whether to merge data frames if all have the same names (default is FALSE).}
 }
 \value{
-A list with two elements:
-\itemize{
-\item \code{missing_columns}: Column names that are in \code{standard_names} but missing from the data frame.
-\item \code{extra_columns}: Column names that are in the data frame but not in \code{standard_names}.
-}
+If merging is enabled and all data frames have the same column names, it returns a merged data frame.
+If verbosity is enabled, it prints out any columns that do not match the standard terms.
 }
 \description{
-This function checks if the column names of a data frame correspond to the
-names contained in a vector of standard column names. It returns the columns
-that are missing in the data frame or columns in the data frame that are
-not part of the standard names vector. If \code{verbose} is \code{TRUE}, the function
-prints details about the missing and extra columns.
+This function checks that the column names of a data frame (or multiple data frames)
+are part of a set of standard terms from the Darwin Core. It will output the columns
+that do not follow the standard names and can merge data frames if specified.
 }
 \examples{
-df <- data.frame(a = 1:3, b = 4:6, d = 7:9)
-standard_names <- c("a", "b", "c")
-check_column_names(df, standard_names, verbose = TRUE)
+# Example usage with a single data frame
+check_column_names(fish_data)
+
+# Example usage with a list of data frames and same column names
+check_column_names((list(fish_data, fish_data),merge = T))
+
+# Example usage with a list of data frames and different column names
+fish_data1 <- fish_data
+fish_data2 <- fish_data \%>\%
+rename(latitude = decimalLatitude, longitude = decimalLongitude)
+check_column_names(list(fish_data1, fish_data2), merge = T)
+
 }
