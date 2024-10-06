@@ -16,7 +16,7 @@ First, ensure you have `remotes` installed:
 ```r
 install.packages("remotes")
 
-remotes::install_github("yourusername/yourPackageName")
+remotes::install_github("ytorres-cambas/danubeoccurR")
 remotes::install_github("AnthonyBasooma/specleanr")
 
 
@@ -41,7 +41,7 @@ result <- check_species_name(data, col_species_name = "species", target_accuracy
 
 # View the result
 print(result)
-
+```
 
 #### 4. License
 
