@@ -43,7 +43,7 @@ updated_coords <- snap_points_on_map(coords)
 # Print data frame with original and new coordinates
 print(updated_coords)
 ```
-The snap_points_on_map function will return an updated data frame with the snapped coordinates, adjusting the original points to valid locations based on the underlying map data.
+The `snap_points_on_map()` function will return an updated data frame with the snapped coordinates, adjusting the original points to valid locations based on the underlying map data.
 #### 4. License
 
 You can include a section on the license under which your package is distributed. For example:
