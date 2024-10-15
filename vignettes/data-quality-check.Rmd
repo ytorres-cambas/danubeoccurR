@@ -1,0 +1,58 @@
+---
+title: "Check Data Quality"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Check Data Quality}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(danubeoccurR)
+```
+
+## Introduction
+
+Before proceeding with any analysis, it is crucial to assess the quality of the compiled dataset of species occurrences. Ensuring that the data is clean and reliable is essential for producing accurate models and results. Common issues in species occurrence datasets include missing values, duplicate records, erroneous coordinates, and misidentified species.
+
+## Step 1: Install the Package from GitHub
+
+To get started, you need to install the danubeoccurR, package from GitHub. 
+You can do this using the devtools package:
+
+```{r, eval=FALSE}
+# Install the devtools package if you haven't already
+install.packages("devtools")
+
+# Install the danubeoccurR package from GitHub
+devtools::install_github("ytorres-cambas/danubeoccurR")
+devtools::install_github("AnthonyBasooma/specleanr")
+library(c(danubeoccurR, specleanr))
+```
+
+## Step 2: Check for Missing Data
+
+Verify that key fields such as species name, geographic coordinates, and date of observation are complete. Missing values in any of these fields can affect subsequent analyses.
+
+## Step 3: Remove Duplicates 
+
+Ensure there are no duplicated records, which may bias the results.
+
+## Step 4: Validate Geographic Coordinates
+
+Check that the latitude and longitude values are within valid ranges (latitude between -90 and 90, longitude between -180 and 180) and that they are plausible for the species in question.
+
+## Step 5: Taxonomic Consistency
+
+Ensure that species names are consistent and match accepted taxonomic references. This can be done using functions like `check_names()` from the `specleanr`.
+
+## Step 6: Outlier Detection
+
+Identify any environmental or geographic outliers that may represent errors in the data. These outliers can be inspected manually or filtered based on specific thresholds.

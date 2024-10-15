@@ -24,7 +24,7 @@ the old names and another for the new names.
 \dontrun{
 # Try changing to correct names: Chondrostoma nasus, Hucho hucho,
 # Anguilla anguilla
-species_name <- c("Chondrostoma nasus", "Hucho hucho", "Anguilla anguilla")
+species_name <- c("Chondostroma nasus", "Hucho ucho", "Anguila anguilla")
 updated_data <- update_name_app(species_name)
 }
 

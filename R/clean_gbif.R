@@ -4,7 +4,8 @@
 #' `download_gbif_records()` function from this package. It applies filters based on
 #' coordinate precision, uncertainty, and geographic buffers, removes records with low precision
 #' or uncertainty, excludes records near country, capital, and zoo/herbaria centroids using methods
-#' from the `CoordinateCleaner` package, and eliminates duplicates. Additionally, it removes records
+#' from the `CoordinateCleaner` package, and eliminates duplicates based on longitude,
+#' latitude, speciesKey, and datasetKey. Additionally, it removes records
 #' that do not contain species or year information.
 #'
 #' The function uses the following methods from the `CoordinateCleaner` package:
@@ -25,6 +26,8 @@
 #' @param datasetKey String. Column name for dataset key. Default is "datasetKey".
 #' @param year String. Column name for the year of occurrence. Default is "year".
 #' @param species String. Column name for the species. Default is "species".
+#' @param duplicate Logical. Default is FALSE. Whether or not to remove duplicates that have
+#' the same longitude, latitude, speciesKey, and datasetKey.
 #'
 #' @return A cleaned data frame with species occurrences.
 #' @import CoordinateCleaner
@@ -57,7 +60,8 @@ clean_gbif <- function(df,
                        speciesKey = "speciesKey",
                        datasetKey = "datasetKey",
                        year = "year",
-                       species = "species") {
+                       species = "species",
+                       duplicate = FALSE) {
 
   # Ensure required columns are present in the data frame
   required_columns <- c(decimalLongitude, decimalLatitude, speciesKey, datasetKey, year, species)
@@ -85,12 +89,15 @@ clean_gbif <- function(df,
   }
 
   # Remove duplicates based on longitude, latitude, speciesKey, and datasetKey
-  before_duplicates <- nrow(df)
+  if(duplicate){
+    before_duplicates <- nrow(df)
   df <- df %>%
     dplyr::distinct(!!rlang::sym(decimalLongitude), !!rlang::sym(decimalLatitude), !!rlang::sym(speciesKey), !!rlang::sym(datasetKey), .keep_all = TRUE)
   after_duplicates <- nrow(df)
   removed_duplicates <- before_duplicates - after_duplicates
   message("Removed ", removed_duplicates, " duplicate records.")
+  }
+
 
   # Remove records near country centroids (using CoordinateCleaner::cc_cen)
   if (!is.null(buffer_centroid_countries)) {
@@ -129,8 +136,7 @@ clean_gbif <- function(df,
   removed_year <- before_year - after_year
   message("Testing missing year or species: Removed ", removed_year, " records.")
 
-  after_filter <- before_filter - nrow(df)
-  message("Retained ", after_filter, " out of ", before_filter, " records after cleaning.")
+  message("Retained ", nrow(df), " out of ", before_filter, " records after cleaning.")
 
   return(df)
 }

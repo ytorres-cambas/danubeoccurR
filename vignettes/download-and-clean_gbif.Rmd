@@ -1,0 +1,227 @@
+---
+title: "Downloading and Cleaning Fish Species Occurrences from GBIF for the Danube River Basin"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Downloading and Cleaning Fish Species Occurrences from GBIF for the Danube River Basin}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(danubeoccurR)
+library(hydrographr)
+library(specleanr)
+```
+
+## Introduction
+
+This vignette demonstrates how to use the functions in the danubeoccurR package
+to download and clean fish species occurrence records from the Global 
+Biodiversity Information Facility (GBIF) for the Danube River Basin. It covers
+the steps to filter, download, and clean the data to prepare it for further
+analysis. 
+
+Before starting, ensure that you have:
+
+- An active internet connection to access GBIF data.
+- A GBIF API key, if authentication is needed.
+    
+## Step 1: Install the Package from GitHub
+
+To get started, you need to install the danubeoccurR, hydrographr and specleanr
+packages from GitHub. You can do this using the devtools package:
+
+```{r, eval=FALSE}
+# Install the devtools package if you haven't already
+install.packages("devtools")
+
+# Install the danubeoccurR package from GitHub
+devtools::install_github("ytorres-cambas/danubeoccurR")
+devtools::install_github("glowabio/hydrographr")
+devtools::install_github("AnthonyBasooma/specleanr")
+library(danubeoccurR)
+library(hydrographr)
+library(specleanr)
+```
+
+## Step 2: Downloading GBIF Data
+
+After installing the package, you can download fish species occurrences using 
+the `download_gbif_records()` function. This will fetch records that fall within
+the geographic boundary of the Danube River Basin.
+
+```{r,eval=TRUE}
+# Define species to download. We will use only three species from a check list
+# of fish species form the Danube River Basin. The complete check list is data
+# set include with the package danubeoccurR
+species_list <- species_checklist[1:2]
+print(species_list)
+```
+
+```{r,eval=TRUE}
+# Define a geographic bounding box to use for querying GBIF occurrences within
+# the specified area. The bounding box should be a simple feature (sf) object, 
+# typically imported into R with sf::read_sf().
+# In this example, we use an sf object that is included in the danubeoccurR 
+# package, so there is no need to import it manually.
+bbox_danube_basin
+```
+
+```{r,eval=TRUE}
+# Convert the polygon to WKT format using the `get_wkt` function. 
+# This format is required for GBIF. The function takes an sf polygon object, 
+# ensures that the polygon has a counterclockwise winding order, 
+# and returns the WKT (Well-Known Text) representation of the polygon.
+wkt <- get_wkt(bbox_danube_basin)
+print(wkt)
+```
+
+This function retrieves fish species occurrences from GBIF based on the species
+list and the polygon that represents the Danube River Basin. 
+We set `import_to_r = TRUE` to import the occurrences into R. The function 
+returns a list with a data frame with occurrences and data for citation.
+
+```{r,eval=FALSE}
+# Get the path to the temporary directory to save occurrences
+temp_path <- tempdir() 
+
+# Download occurrences from GBIF
+gbif_data <- download_gbif_records(species_names = species_list,
+                                   wkt = wkt,
+                                   output_occur_path = temp_path,
+                                   gbif_user = "your_username",
+                                   gbif_pwd = "your_password",
+                                   gbif_email = "your_email@example.com",
+                                   import_to_r = TRUE)
+```
+
+## Step 3: Cleaning GBIF Data
+
+Once the occurrences are downloaded, we will clean the data using `clean_gbif()`.
+This function removes duplicates, invalid coordinates, and other quality issues.
+This ensures that the data is ready for analysis, without missing or erroneous 
+records.
+
+```{r, eval=TRUE, echo=TRUE}
+# Clean the downloaded GBIF records
+gbif_cleaned <- clean_gbif(gbif_data$raw_download,
+                                  coordinateUncertaintyInMeters = 1000,
+                                  coordinatePrecision = 0.01,
+                                  buffer_centroid_zoo_herbaria = 1000,
+                                  buffer_centroid_capitals = 1000,
+                                  buffer_centroid_countries = 1000)
+```
+
+As we can see, `r nrow(gbif_cleaned)` out of `r nrow(gbif_data$raw_download)` records were 
+retained after the cleaning procedure.
+
+```{r, eval=TRUE, echo=TRUE}
+# Number of records before cleaning
+nrow(gbif_data$raw_download)
+
+# Number of records after cleaning
+nrow(gbif_cleaned)
+
+# Preview the cleaned data
+head(gbif_cleaned)
+```
+
+## Step 4: Visualizing the Occurrences
+
+We can now visualize the occurrences on a map using `visualize_points()`. 
+
+```{r, eval=TRUE, echo=TRUE, message=FALSE, fig.width=7, fig.height=5}
+visualize_points(points_df = gbif_cleaned,
+                 layer = danube_basin)
+```
+
+As shown, some occurrence records fall outside the Danube River Basin. This happens because we used a bounding box as the spatial reference when querying GBIF. To limit the data strictly to the Danube River Basin, we can apply spatial filtering using the `get_spatial_subset()` function. This function filters the points based on a layer representing the Danube River Basin, which is included as one of the datasets in the `danubeoccurR` package.
+
+```{r, eval=TRUE, echo=TRUE, message=FALSE}
+# Spatial filtering of occurrence records
+gbif_filtered <- get_spatial_subset(danube_basin,
+                                    gbif_cleaned,
+                                    "decimalLatitude",
+                                    "decimalLongitude",
+                                     verbose = TRUE)
+```
+
+Now, the map displays only the occurrence records that are strictly located within the Danube River Basin.
+
+```{r, eval=TRUE, echo=TRUE, message=FALSE, fig.width=7, fig.height=5}
+visualize_points(points_df = gbif_filtered,
+                 layer = danube_basin)
+```
+
+
+## Step 6: Checking species names
+
+To clean the species names and ensure consistency with FishBase, we will use the `check_names()` function from the package `specleanr`. This function matches species names to FishBase and, by default, returns the accepted name if a synonym is provided. The function also checks for spelling errors and suggests the closest match in FishBase based on the similarity threshold defined by the pct parameter. We will use the default pct value of 90 that indicates a match of 90% or above is required.
+
+```{r, eval=FALSE}
+# Check species names for inconsistencies 
+gbif_name_checked <- check_names(data = gbif_filtered,
+                                 colsp = "species",
+                                 verbose = FALSE,
+                                 pct = 90,
+                                 merge = F,
+                                 sn = FALSE)
+```
+
+## Step 7: Extracting sub-catchment ids
+
+## Step 8: Detecting environmental outliers
+
+In the context of Species Distribution Models (SDMs), environmental outliers 
+refer to species occurrence records that are associated with unusual or extreme
+environmental conditions compared to the majority of other occurrence points. 
+These outliers may occur due to various reasons, such as:
+
+- Measurement Errors: Incorrect or inaccurate recording of environmental data 
+(e.g., temperature, precipitation) at a specific location.
+
+- Spatial Errors: Geographical misplacement of occurrence points, leading to 
+mismatches between species records and their true environmental conditions.
+
+- Natural Anomalies: Rare, but genuine occurrences of a species in unusual or 
+extreme environments, which might be biologically significant but differ from 
+the conditions of the majority of occurrences.
+
+In SDMs, these environmental outliers can affect model performance and 
+predictions by skewing the relationships between species occurrences and 
+environmental variables. Consequently, they may lead to:
+
+- Overfitting: The model may attempt to capture patterns that are specific to 
+the outlier points but not reflective of the broader ecological niche of 
+the species.
+
+- Erroneous Predictions: The model might predict unsuitable areas as 
+potentially habitable based on outlier values.
+
+## Step 4: Creating a metadata file
+
+```{r, eval=FALSE}
+# 
+```
+
+## Conclusion
+
+This vignette shows how to download and clean fish species occurrence data from
+GBIF for the Danube River Basin using the danubeoccurR package. The cleaned data
+can be further analyzed or used for conservation strategies. This pipeline can 
+also be integrated into broader biodiversity assessment workflows.
+
+## Acknowledgements
+
+Funding was provided through the DANUBE4all project, funded by the European 
+Union’s Horizon Europe research and innovation programme under grant 
+agreement no. 101093985.
+
+

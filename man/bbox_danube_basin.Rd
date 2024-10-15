@@ -3,7 +3,7 @@
 \docType{data}
 \name{bbox_danube_basin}
 \alias{bbox_danube_basin}
-\title{Danube River Basin}
+\title{Polygon that includes the Danube River Basin}
 \format{
 \subsection{\code{bbox_danube_basin}}{
 
@@ -12,6 +12,9 @@ Geometry type: MULTIPOLYGON
 Bounding box:  xmin: 8.1525 ymin: 42.08333 xmax: 29.73583 ymax: 50.245
 Geodetic CRS:  WGS 84
 }
+}
+\source{
+QGIS
 }
 \usage{
 bbox_danube_basin

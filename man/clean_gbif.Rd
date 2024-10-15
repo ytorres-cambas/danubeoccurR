@@ -16,7 +16,8 @@ clean_gbif(
   speciesKey = "speciesKey",
   datasetKey = "datasetKey",
   year = "year",
-  species = "species"
+  species = "species",
+  duplicate = FALSE
 )
 }
 \arguments{
@@ -44,6 +45,9 @@ typically downloaded using the \code{download_gbif_records()} function from this
 \item{year}{String. Column name for the year of occurrence. Default is "year".}
 
 \item{species}{String. Column name for the species. Default is "species".}
+
+\item{duplicate}{Logical. Default is FALSE. Whether or not to remove duplicates that have
+the same longitude, latitude, speciesKey, and datasetKey.}
 }
 \value{
 A cleaned data frame with species occurrences.
@@ -53,7 +57,8 @@ This function cleans species occurrence records downloaded using the
 \code{download_gbif_records()} function from this package. It applies filters based on
 coordinate precision, uncertainty, and geographic buffers, removes records with low precision
 or uncertainty, excludes records near country, capital, and zoo/herbaria centroids using methods
-from the \code{CoordinateCleaner} package, and eliminates duplicates. Additionally, it removes records
+from the \code{CoordinateCleaner} package, and eliminates duplicates based on longitude,
+latitude, speciesKey, and datasetKey. Additionally, it removes records
 that do not contain species or year information.
 }
 \details{
