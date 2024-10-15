@@ -165,7 +165,7 @@ visualize_points(points_df = gbif_filtered,
 
 To clean the species names and ensure consistency with FishBase, we will use the `check_names()` function from the package `specleanr`. This function matches species names to FishBase and, by default, returns the accepted name if a synonym is provided. The function also checks for spelling errors and suggests the closest match in FishBase based on the similarity threshold defined by the pct parameter. We will use the default pct value of 90 that indicates a match of 90% or above is required.
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 # Check species names for inconsistencies 
 gbif_name_checked <- check_names(data = gbif_filtered,
                                  colsp = "species",
@@ -173,7 +173,12 @@ gbif_name_checked <- check_names(data = gbif_filtered,
                                  pct = 90,
                                  merge = F,
                                  sn = FALSE)
+
+# Preview the species names
+print(gbif_name_checked)
 ```
+
+As you can see, the species names in the `species` column, which correspond to the species names in our dataset, match the names in the `speciescheck` column from FishBase, indicating that no changes are required.
 
 ## Step 7: Extracting sub-catchment ids
 

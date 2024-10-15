@@ -21,9 +21,9 @@ temp_path <- tempdir()
 gbif_data <- download_gbif_records(species_names = species_list,
                                      wkt = wkt,
                                      output_occur_path = temp_path,
-                                     gbif_user = "yusdiel",
-                                     gbif_pwd = "7PcKW2Yr95E2PbW",
-                                     gbif_email = "yusdiel.torres@gmail.com",
+                                     gbif_user = "user",
+                                     gbif_pwd = "pasword",
+                                     gbif_email = "user@mail.com",
                                      import_to_r = TRUE)
 
 # Clean the downloaded GBIF records
