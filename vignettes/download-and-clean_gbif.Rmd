@@ -31,7 +31,11 @@ analysis.
 Before starting, ensure that you have:
 
 - An active internet connection to access GBIF data.
-- A GBIF API key, if authentication is needed.
+- A GBIF API key.
+
+Additionally, ensure that you follow the <a href="https://glowabio.github.io/hydrographr/articles/hydrographr.html" target="_blank">installation guideline</a> of the package `hydrographr`  for your operating system.
+
+
     
 ## Step 1: Install the Package from GitHub
 
@@ -98,7 +102,7 @@ gbif_data <- download_gbif_records(species_names = species_list,
                                    output_occur_path = temp_path,
                                    gbif_user = "your_username",
                                    gbif_pwd = "your_password",
-                                   gbif_email = "your_email@example.com",
+                                   gbif_email="your_email@example.com",
                                    import_to_r = TRUE)
 ```
 
@@ -181,6 +185,98 @@ print(gbif_name_checked)
 As you can see, the species names in the `species` column, which correspond to the species names in our dataset, match the names in the `speciescheck` column from FishBase, indicating that no changes are required.
 
 ## Step 7: Extracting sub-catchment ids
+
+Next, we will extract the IDs of the sub-catchments where each occurrence is located and add a new column with these IDs to the dataset. To achieve this, we will use the `extract_ids()` function from the <a href="https://github.com/glowabio/hydrographr" target="_blank">hydrographr package</a>. The sub-catchment layer was generated from the <a href="https://essd.copernicus.org/articles/14/4525/2022/essd-14-4525-2022.html" target="_blank">Hydrography90m dataset</a> by downloading the tiles corresponding to the Danube River Basin and cropping them using functions from the <a href="https://github.com/glowabio/hydrographr" target="_blank">hydrographr package</a>. 
+
+Lets first download, crop and merge raster tiles with sub-catchments.
+
+
+```{r, eval=FALSE}
+
+# Folder to save final Hydrography90m layers
+# Create output folder if it doesn't exist
+output_hydro90m <- paste0(getwd(), "/hydrography90m")
+if(!dir.exists(output_hydro90m)) dir.create(output_hydro90m)
+
+# Folder to save temporal files
+temp <-  paste0(getwd(), "/temp")
+if(!dir.exists(temp)) dir.create(temp)
+
+# Define tile ID
+id <- c("h18v02", "h18v04", "h20v02", "h20v04")
+
+# Define raster variable
+r_var <- c("sub_catchment")
+
+# raster files
+download_tiles(variable = r_var,
+               file_format = "tif",
+               tile_id = id,
+               download_dir = temp)
+
+
+# Get the full paths of the raster tiles
+raster_dir <- list.files(paste0(temp, "/r.watershed"), pattern = ".tif",
+                         full.names = TRUE, recursive = TRUE)
+
+# Crop raster tiles to the extent of a sf object
+for(itile in raster_dir) {
+
+  crop_to_extent(raster_layer = itile,
+                 bounding_box = bbox_danube_basin,
+                 out_dir = temp,
+                 file_name =  paste0(str_remove(basename(itile), ".tif"),
+                                     "_tmp.tif"))
+
+}
+
+# Merge filtered raster tiles and save result to a directory
+merge_tiles(tile_dir = temp,
+            tile_names = list.files(temp,
+                                    full.names = FALSE,
+                                    pattern = "_tmp.tif"),
+            out_dir = output_hydro90m,
+            file_name = "hydro90m_subcatch_danube.tif",
+            name = "ID",
+            read = FALSE,
+            compression = "high",
+            quiet = FALSE)
+```
+
+Now, we are ready to extract the sub-catchment IDs.
+
+```{r, eval=TRUE}
+# Create unique ids for rows in gbif_filtered. It is required by the function
+# extract_ids. It will be removed later
+gbif_filtered$id_col <- seq(1:nrow(gbif_filtered))
+
+# Extract sub-catchment IDs 
+ids_df <- extract_ids(
+    data = gbif_filtered,
+    lon = "decimalLongitude",
+    lat = "decimalLatitude",
+    id = "id_col",
+    basin_layer = NULL,
+    subc_layer = paste0(getwd(), "/hydrography90m/subcatch_danube.tif"),
+    quiet = FALSE
+  ) 
+
+# Check all occurrences have sub-catchment IDs
+if(length(which(is.na(ids_df$subcatchment_id))) == 0) {
+  print("All occurrences have sub-catchment IDs.")
+} else {
+  print(paste0(length(which(is.na(ids_df$subcatchment_id))),
+               " occurrences are missing sub-catchment IDs."))
+}
+
+# New column with sub-catchment IDs
+gbif_filtered <- gbif_filtered %>%
+  mutate(subcatchmentID = ids_df$subcatchment_id) %>%
+  select(-id_col) # delete column with row ids 
+
+# Preview the data set
+head(gbif_filtered)
+```
 
 ## Step 8: Detecting environmental outliers
 
