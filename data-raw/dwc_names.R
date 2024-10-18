@@ -19,6 +19,8 @@ dwc_names <- c(
   "associatedReferences",                # A list of references associated with the occurrence
   "associatedSequences",                 # A list of genetic sequences associated with the occurrence
   "associatedTaxa",                      # A list of taxa associated with the occurrence
+  "materialSampleID",                    # An identifier for the material sample
+  "occurrenceRemarks",                   # Comments or notes about the occurrence
 
   # Event-related terms
   "eventID",                             # An identifier for the event
@@ -78,7 +80,7 @@ dwc_names <- c(
   "kingdom",                             # The kingdom of the organism
   "phylum",                              # The phylum of the organism
   "class",                               # The class of the organism
-  "order",                              # The order of the organism
+  "order",                               # The order of the organism
   "family",                              # The family of the organism
   "genus",                               # The genus of the organism
   "specificEpithet",                     # The specific epithet of the organism
@@ -90,6 +92,7 @@ dwc_names <- c(
   "nomenclaturalCode",                   # The code governing the scientific name
   "taxonomicStatus",                     # The status of the name (e.g., accepted, synonym)
   "nomenclaturalStatus",                 # The nomenclatural status (e.g., valid, invalid)
+  "verbatimIdentification",              # The taxon name as it appears in the original record, exactly as provided
 
   # Identification-related terms
   "identificationID",                    # An identifier for the identification event
@@ -112,6 +115,7 @@ dwc_names <- c(
   "bibliographicCitation",               # A citation for the resource as a whole
   "references"                           # A URL or identifier to a related resource or publication
 )
+
 
 
 usethis::use_data(dwc_names, overwrite = TRUE)
