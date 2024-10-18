@@ -8,6 +8,12 @@ dwc_names <- c(
   "recordNumber",                        # A number assigned by the collector of the record
   "recordedBy",                          # A list of names of people, groups, or organizations responsible for recording the occurrence
   "individualCount",                     # The number of individuals observed
+  "organismID",                          # An identifier for the individual organism(s) represented
+  "organismName",                        # A name for the individual organism(s) represented
+  "organismScope",                       # The scope of the record in relation to the organism(s)
+  "organismRemarks",                     # Remarks about the organism(s) represented in the occurrence
+  "organismQuantity",                    # A quantity or relative abundance of organisms in the occurrence
+  "organismQuantityType",                # The type of measurement used to quantify the organism(s)
   "sex",                                 # The sex of the individuals represented in the occurrence
   "lifeStage",                           # The life stage of the individuals (e.g., adult, juvenile)
   "establishmentMeans",                  # The process by which the organism became established at the location (e.g., native, introduced)
@@ -35,6 +41,9 @@ dwc_names <- c(
   "month",                               # The month of the event
   "day",                                 # The day of the event
   "verbatimEventDate",                   # The original event date string before parsing
+  "habitat",                             # A description of the habitat where the event took place
+  "fieldNotes",                          # Notes taken in the field during the event
+  "eventRemarks",                        # Remarks or comments about the event
 
   # Location-related terms
   "locationID",                          # An identifier for the location
@@ -100,6 +109,7 @@ dwc_names <- c(
   "typeStatus",                          # The type status of the specimen (e.g., holotype, syntype)
   "identifiedBy",                        # The person who identified the organism
   "dateIdentified",                      # The date the identification was made
+  "identificationVerificationStatus",    # The status of the identification verification
   "identificationRemarks",               # Remarks about the identification process
 
   # Data resource-related terms
@@ -115,6 +125,7 @@ dwc_names <- c(
   "bibliographicCitation",               # A citation for the resource as a whole
   "references"                           # A URL or identifier to a related resource or publication
 )
+
 
 
 
