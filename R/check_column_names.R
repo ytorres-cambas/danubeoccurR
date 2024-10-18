@@ -51,7 +51,7 @@ check_column_names <- function(df_input,
         message(paste("Columns in", df_name, "that do not follow Darwin Core standard terms:"))
         message(paste(non_standard_cols, collapse = ", "))
       } else {
-        message(paste("All columns in", df_name, "follow Darwin Core standard terms."))
+        message(paste("All columns in", df_name, "follow suggested standard terms."))
       }
     }
   }
