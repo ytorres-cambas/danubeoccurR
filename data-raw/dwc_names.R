@@ -1,5 +1,4 @@
 ## code to prepare `dwc_names` dataset
-
 dwc_names <- c(
   # Occurrence-related terms
   "occurrenceID",                        # A unique identifier for the occurrence record
@@ -121,8 +120,6 @@ dwc_names <- c(
   "bibliographicCitation",               # A citation for the resource as a whole
   "references"                           # A URL or identifier to a related resource or publication
 )
-
-
 
 
 
