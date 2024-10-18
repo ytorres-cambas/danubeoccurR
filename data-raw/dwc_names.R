@@ -7,13 +7,11 @@ dwc_names <- c(
   "catalogNumber",                       # An identifier for the record within the dataset or collection
   "recordNumber",                        # A number assigned by the collector of the record
   "recordedBy",                          # A list of names of people, groups, or organizations responsible for recording the occurrence
+  "recordedByID",                        # An identifier for the person or group who recorded the occurrence
   "individualCount",                     # The number of individuals observed
-  "organismID",                          # An identifier for the individual organism(s) represented
-  "organismName",                        # A name for the individual organism(s) represented
-  "organismScope",                       # The scope of the record in relation to the organism(s)
-  "organismRemarks",                     # Remarks about the organism(s) represented in the occurrence
-  "organismQuantity",                    # A quantity or relative abundance of organisms in the occurrence
-  "organismQuantityType",                # The type of measurement used to quantify the organism(s)
+  "individualID",                        # An identifier for an individual organism
+  "organismQuantity",                    # A quantity or amount of organisms
+  "organismQuantityType",                # The type of measurement for the quantity of organisms
   "sex",                                 # The sex of the individuals represented in the occurrence
   "lifeStage",                           # The life stage of the individuals (e.g., adult, juvenile)
   "establishmentMeans",                  # The process by which the organism became established at the location (e.g., native, introduced)
@@ -41,9 +39,6 @@ dwc_names <- c(
   "month",                               # The month of the event
   "day",                                 # The day of the event
   "verbatimEventDate",                   # The original event date string before parsing
-  "habitat",                             # A description of the habitat where the event took place
-  "fieldNotes",                          # Notes taken in the field during the event
-  "eventRemarks",                        # Remarks or comments about the event
 
   # Location-related terms
   "locationID",                          # An identifier for the location
@@ -68,10 +63,12 @@ dwc_names <- c(
   "decimalLongitude",                    # The longitude of the occurrence
   "coordinateUncertaintyInMeters",       # The uncertainty in the coordinates, in meters
   "coordinatePrecision",                 # The precision of the coordinates
+  "geodeticDatum",                       # The geodetic datum used for the coordinates
   "pointRadiusSpatialFit",               # The spatial fit for a radius around the coordinates
   "footprintWKT",                        # The Well-Known Text (WKT) representation of the footprint
   "footprintSRS",                        # The Spatial Reference System for the footprint
   "footprintSpatialFit",                 # The spatial fit of the footprint
+  "locationRemarks",                     # Comments or notes about the location
   "georeferencedBy",                     # The name of the person or group who georeferenced the occurrence
   "georeferencedDate",                   # The date when the georeferencing was performed
   "georeferenceProtocol",                # The protocol used to determine the coordinates
@@ -89,7 +86,7 @@ dwc_names <- c(
   "kingdom",                             # The kingdom of the organism
   "phylum",                              # The phylum of the organism
   "class",                               # The class of the organism
-  "order",                               # The order of the organism
+  "order",                              # The order of the organism
   "family",                              # The family of the organism
   "genus",                               # The genus of the organism
   "specificEpithet",                     # The specific epithet of the organism
@@ -109,7 +106,6 @@ dwc_names <- c(
   "typeStatus",                          # The type status of the specimen (e.g., holotype, syntype)
   "identifiedBy",                        # The person who identified the organism
   "dateIdentified",                      # The date the identification was made
-  "identificationVerificationStatus",    # The status of the identification verification
   "identificationRemarks",               # Remarks about the identification process
 
   # Data resource-related terms
@@ -125,6 +121,7 @@ dwc_names <- c(
   "bibliographicCitation",               # A citation for the resource as a whole
   "references"                           # A URL or identifier to a related resource or publication
 )
+
 
 
 
