@@ -68,7 +68,9 @@ update_name_app <- function(data, old_names_col, new_names_col) {
       selected_row <- current_data[current_data[[old_names_col]] == selected_species, ]
       #selected_row <- selected_row[selected_row[[old_names_col]] %in% unique_old_names, ]
 
-      selected_row[, c(old_names_col, new_names_col)]  # Show only old and new names
+      # Ensure correct selection of columns dynamically
+      selected_row %>%
+        dplyr::select(all_of(c(old_names_col, new_names_col)))  # Show only old and new names
     })
 
     # Store the original new names before any updates
