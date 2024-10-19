@@ -61,12 +61,12 @@ update_name_app <- function(data, old_names_col, new_names_col) {
       current_data <- species_data()
 
       # Filter to show only unique values in the old names column
-      unique_old_names <- unique(current_data[[old_names_col]])
+      #unique_old_names <- unique(current_data[[old_names_col]])
       selected_species <- input$species_select
 
       # Filter the current data to show only the selected row
       selected_row <- current_data[current_data[[old_names_col]] == selected_species, ]
-      selected_row <- selected_row[selected_row[[old_names_col]] %in% unique_old_names, ]
+      #selected_row <- selected_row[selected_row[[old_names_col]] %in% unique_old_names, ]
 
       selected_row[, c(old_names_col, new_names_col)]  # Show only old and new names
     })
