@@ -1,5 +1,5 @@
 Package: danubeoccurR
-Title: What the Package Does (One Line, Title Case)
+Title: Tools for Downloading, Cleaning, and Managing Fish Occurrence Records for the Danube River Basin
 Version: 0.0.0.9000
 Authors@R: 
     person("Yusdiel", "Torres-Cambas", , "yusdiel.torres-cambas@igb-berlin.de", role = c("aut", "cre"),

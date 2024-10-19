@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_species_name.R
 \name{check_species_name}
 \alias{check_species_name}
-\title{Check Species Names with Variable Accuracy}
+\title{Check Species Names with Variable Accuracy and Manual Editing Option}
 \usage{
 check_species_name(
   data,
@@ -10,7 +10,8 @@ check_species_name(
   verbose = FALSE,
   target_accuracy = 90,
   accuracy_decrement = NULL,
-  synonym = FALSE
+  synonym = FALSE,
+  manual = FALSE
 )
 }
 \arguments{
@@ -26,15 +27,21 @@ check_species_name(
 accuracy levels, decrementing by this value.}
 
 \item{synonym}{Logical, if \code{TRUE}, synonym names will be considered when checking species names.}
+
+\item{manual}{Logical, if \code{TRUE}, after the name-checking process, the function will call a Shiny app
+for manual editing of the results.}
 }
 \value{
-A data frame with species names checked against FishBase at the specified accuracy,
-or a list of data frames if \code{accuracy_decrement} is provided.
+If \code{accuracy_decrement} is \code{NULL}, the function returns a single data frame with checked species names.
+If \code{accuracy_decrement} is provided, it returns a list of data frames for each accuracy level.
+If \code{manual = TRUE}, the function will return a manually updated data frame after the Shiny app interaction.
 }
 \description{
 This function checks the validity of species names in a data frame using the \code{check_names}
 function from the \code{specleanr} package, allowing for flexible matching accuracy and synonym lookup.
 It extends \code{check_names} by enabling loops through different matching accuracy levels if required.
+Additionally, if \code{manual = TRUE}, the function launches a Shiny app to allow for manual editing of
+the names after the automatic checking process is complete.
 }
 \examples{
 \dontrun{

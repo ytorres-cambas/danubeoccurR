@@ -4,28 +4,32 @@
 \alias{update_name_app}
 \title{Update Species Data in a Shiny MiniUI App}
 \usage{
-update_name_app(species_name)
+update_name_app(data, old_names_col, new_names_col)
 }
 \arguments{
-\item{species_name}{A string containing species names.}
+\item{data}{A data frame containing species names and potentially other data.}
+
+\item{old_names_col}{The column name in the data frame corresponding to the old species names.}
+
+\item{new_names_col}{The column name in the data frame corresponding to the new species names to be updated.}
 }
 \value{
-Returns a data frame with one column for the old names and another
-for the new names.
+Returns the original data frame with the updated values in the new names column
+and a flag indicating whether each row was manually updated.
 }
 \description{
 This function launches a Shiny gadget within RStudio that allows users to
-manually update species data. Users can select a species from a dropdown,
-enter a new name, and update the corresponding entry. Once completed, the
-updated names are saved and returned as a data frame with one column for
-the old names and another for the new names.
+manually update species data in a specified data frame. Only rows where the old species
+name differs from the new species name (or where the new species name is NA) are shown for
+selection and modification. Selecting a species from the dropdown filters the table to only
+show the selected row for updating. Once completed, the entire original data frame is
+returned with updated values in the specified column and an additional flag column.
 }
 \examples{
 \dontrun{
-# Try changing to correct names: Chondrostoma nasus, Hucho hucho,
-# Anguilla anguilla
-species_name <- c("Chondostroma nasus", "Hucho ucho", "Anguila anguilla")
-updated_data <- update_name_app(species_name)
+df <- data.frame(old_species = c("Chondostroma nasus", "Hucho ucho", "Anguila anguilla"),
+                 new_species = c(NA, "Hucho ucho", NA), other_data = c(1, 2, 3))
+updated_data <- update_name_app(df, "old_species", "new_species")
 }
 
 }
