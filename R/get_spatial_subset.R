@@ -1,39 +1,3 @@
-#' Spatial Subset of Coordinates within a Polygon
-#'
-#' This function takes a polygon (`sf` object) and a data frame with latitude and
-#' longitude columns, and filters the data frame to retain only the coordinates
-#' that fall within the polygon. The CRS (Coordinate Reference System) of both
-#' the polygon and the coordinates must match, and the default CRS is WGS84.
-#'
-#' @param polygon An `sf` object representing the polygon for spatial filtering.
-#' @param data A data frame containing at least two columns for latitude and longitude.
-#' @param lat_col The name of the column in `data` representing latitude.
-#' @param lon_col The name of the column in `data` representing longitude.
-#' @param crs The CRS (Coordinate Reference System) to ensure consistency between the polygon and coordinates. Default is WGS84 (`EPSG:4326`).
-#' @param verbose Logical. If `TRUE`, prints detailed messages. Default is `FALSE`.
-#'
-#' @return A data frame containing only the rows of the original data frame where
-#' the coordinates fall within the polygon.
-#'
-#' @importFrom sf st_as_sf st_transform st_crs st_within
-#' @importFrom dplyr filter
-#'
-#' @export
-#'
-#' @examples
-#' # Example polygon and data
-#' polygon <- danube_basin
-#' data <- fish_data_2 <- fish_data %>%
-#' select(species, decimalLatitude, decimalLongitude)
-#' filtered_data <- get_spatial_subset(polygon,
-#'                                     data,
-#'                                     "decimalLatitude",
-#'                                     "decimalLongitude",
-#'                                     verbose = TRUE)
-#'
-#' # Map with points that fall within the polygon
-#' visualize_points(filtered_data, layer = danube_basin, show_extra_columns = TRUE)
-
 get_spatial_subset <- function(polygon, data, lat_col, lon_col, crs = 4326, verbose = FALSE) {
 
   # Check if the input is a data frame
@@ -69,11 +33,14 @@ get_spatial_subset <- function(polygon, data, lat_col, lon_col, crs = 4326, verb
   # Perform spatial filtering (points within polygon)
   points_within <- sf::st_within(points_sf, polygon, sparse = FALSE)
 
+  # Convert the matrix result into a logical vector
+  points_within_logical <- apply(points_within, 1, any)
+
   # Filter the data frame for points that are within the polygon
-  filtered_data <- data[points_within, ]
+  filtered_data <- data[points_within_logical, ]
 
   if (verbose) {
-    message(paste(nrow(filtered_data), "out of", nrow(data), "points are within the polygon."))
+    message(paste(sum(points_within_logical), "out of", nrow(data), "points are within the polygon."))
   }
 
   return(filtered_data)

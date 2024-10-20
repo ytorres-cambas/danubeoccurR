@@ -38,36 +38,51 @@ get_taxonomy_info <- function(species, all_categories = FALSE, sources = c("gbif
   # Initialize empty list to store results
   taxonomy_results <- list()
 
+  # Load FishBase taxa data once, if "fishbase" is included in sources
+  if ("fishbase" %in% sources) {
+    fishbase_taxa <- rfishbase::load_taxa(server = "fishbase")
+  }
+
   # Loop through each species to query taxonomic information from all sources
   for (sp in species) {
     tryCatch({
-      # FishBase is handled separately
+      # FishBase handling if included in sources
       if ("fishbase" %in% sources) {
-        fishbase_info <- rfishbase::taxonomy(sp)
-        if (all_categories) {
-          taxonomy_results[[sp]] <- fishbase_info
+        # Filter the FishBase data for the current species
+        fishbase_info <- fishbase_taxa[fishbase_taxa$Species == sp, ]
+
+        if (nrow(fishbase_info) == 0) {
+          warning(paste("Species", sp, "not found in FishBase."))
         } else {
-          selected_ranks <- fishbase_info[c("Species", "Year", "Author", "Genus", "Family", "Order")]
-          taxonomy_results[[sp]] <- as.data.frame(t(selected_ranks))
+          if (all_categories) {
+            taxonomy_results[[sp]] <- fishbase_info
+          } else {
+            selected_ranks <- fishbase_info[, c("Species", "Genus", "Family", "Order")]
+            taxonomy_results[[sp]] <- as.data.frame(t(selected_ranks))
+          }
         }
-        next
+
+        # If only FishBase is used, skip querying other sources
+        if (identical(sources, "fishbase")) next
       }
 
-      # For other sources, use taxize
-      for (source in sources) {
-        tax_info <- taxize::classification(sp, db = source)[[1]]
-        if (all_categories) {
-          taxonomy_results[[sp]] <- as.data.frame(tax_info)
-        } else {
-          selected_ranks <- tax_info[tax_info$rank %in% c("genus", "family", "order"), ]
-          # Add Species, Year, and Author if available
-          species_info <- data.frame(
-            Species = sp,
-            Year = NA,     # Placeholder for year
-            Author = NA,   # Placeholder for author
-            stringsAsFactors = FALSE
-          )
-          taxonomy_results[[sp]] <- merge(species_info, as.data.frame(selected_ranks), by = NULL)
+      # Handle other sources with taxize
+      if (!"fishbase" %in% sources || length(sources) > 1) {
+        for (source in sources[sources != "fishbase"]) {
+          tax_info <- taxize::classification(sp, db = source)[[1]]
+          if (all_categories) {
+            taxonomy_results[[sp]] <- as.data.frame(tax_info)
+          } else {
+            selected_ranks <- tax_info[tax_info$rank %in% c("genus", "family", "order"), ]
+            # Add Species, Year, and Author if available
+            species_info <- data.frame(
+              Species = sp,
+              Year = NA,     # Placeholder for year
+              Author = NA,   # Placeholder for author
+              stringsAsFactors = FALSE
+            )
+            taxonomy_results[[sp]] <- merge(species_info, as.data.frame(selected_ranks), by = NULL)
+          }
         }
       }
     }, error = function(e) {
