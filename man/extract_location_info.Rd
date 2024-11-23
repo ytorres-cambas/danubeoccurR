@@ -2,45 +2,33 @@
 % Please edit documentation in R/extract_location_info.R
 \name{extract_location_info}
 \alias{extract_location_info}
-\title{Extract Municipality, Province, and Country using Latitude and Longitude}
+\title{Extract Municipality, Province, and Country using Latitude and Longitude (OSM)}
 \usage{
-extract_location_info(
-  data,
-  latitude = "latitude",
-  longitude = "longitude",
-  service = "osm",
-  api_key = NULL
-)
+extract_location_info(data, latitude = "latitude", longitude = "longitude")
 }
 \arguments{
 \item{data}{A data frame containing the latitude and longitude columns.}
 
-\item{latitude}{Name of the column for latitude in the \code{data} frame (as a string).}
+\item{latitude}{Name of the column for latitude in the \code{data} frame (as a string). Default is
+"latitude".}
 
-\item{longitude}{Name of the column for longitude in the \code{data} frame (as a string).}
-
-\item{service}{Character, geocoding service to use. Options are "osm" (OpenStreetMap) or "google". Default is "osm".}
-
-\item{api_key}{Character, the Google Maps API key (required if using Google Maps).}
+\item{longitude}{Name of the column for longitude in the \code{data} frame (as a string). Default is
+"longitude".}
 }
 \value{
-A data frame with additional columns for municipality, province, and country.
+A data frame with additional columns for municipality, province, and country, preserving the original rows.
 }
 \description{
 This function takes latitude and longitude values and returns the
-corresponding municipality, province, and country (Darwin Core standard) using reverse geocoding.
-Supports both OpenStreetMap (OSM) and Google Maps API.
+corresponding municipality, province, and full country name (Darwin Core standard) using OpenStreetMap (OSM) for reverse geocoding.
 }
 \examples{
 \dontrun{
-# Example usage with OpenStreetMap:
-# Data frame with points in Vienna and Belgrade
 points <- data.frame(
-  decimalLatitude = c(48.2082, 44.7866),
-  decimalLongitude = c(16.3738, 20.4489)
+  decimalLatitude = c(48.2082, 44.7866, 48.2082),
+  decimalLongitude = c(16.3738, 20.4489, 16.3738)
 )
-
-results <- extract_location_info(points, latitude = "decimalLatitude", longitude = "decimalLongitude", service = "osm")
+results <- extract_location_info(points, latitude = "decimalLatitude", longitude = "decimalLongitude")
 print(results)
 }
 }
