@@ -48,8 +48,7 @@ extract_location_info <- function(data, latitude, longitude, service = "osm", ap
       method = "osm",
       full_results = TRUE
     ) %>%
-      select(latitude,
-             longitude,
+      select(
              county,
              state,
              country)
