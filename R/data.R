@@ -200,52 +200,56 @@
 
 #' Fish species occurrence records from GBIF
 #'
-#' Occurrence records of Abramis brama and Acipenser baerii downloaded from GBIF
+#' Occurrence records of **Abramis brama** and **Acipenser baerii** downloaded from GBIF.
+#' The data is provided as a list containing metadata and raw occurrence records.
 #'
 #' @format ## `gbif_data`
-#' A list of length = 2.
-#' gbif_data$gbif_download_citation contains information on the source, date and
-#' method used to download the occurrences ffrom GBIF.
-#' gbif_data$raw_download is a data frame with 2453 rows
-#' and 50 columns:
+#' A list of length 2:
 #' \describe{
-#'   \item{gbifID}{Unique GBIF occurrence identifier.}
-#'   \item{datasetKey}{UUID identifying the dataset in GBIF.}
-#'   \item{occurrenceID}{An identifier for the occurrence (often globally unique).}
-#'   \item{kingdom}{The kingdom to which the organism belongs.}
-#'   \item{phylum}{The phylum classification of the organism.}
-#'   \item{class}{The class of the organism.}
-#'   \item{order}{The order of the organism.}
-#'   \item{family}{The family of the organism.}
-#'   \item{genus}{The genus of the organism.}
-#'   \item{species}{The species name of the organism.}
-#'   \item{infraspecificEpithet}{The infraspecific epithet, such as subspecies or variety.}
-#'   \item{taxonRank}{The taxonomic rank of the organism.}
-#'   \item{scientificName}{The full scientific name including the genus and species.}
-#'   \item{verbatimScientificName}{The original scientific name as recorded in the data.}
-#'   \item{verbatimScientificNameAuthorship}{The original authorship of the scientific name.}
-#'   \item{countryCode}{The ISO country code where the occurrence was recorded.}
-#'   \item{locality}{The locality description for where the occurrence was recorded.}
-#'   \item{stateProvince}{The state or province where the occurrence was recorded.}
-#'   \item{occurrenceStatus}{The status of the occurrence (e.g., present, absent).}
-#'   \item{individualCount}{The number of individuals recorded.}
-#'   \item{publishingOrgKey}{UUID identifying the organization that published the data.}
-#'   \item{decimalLatitude}{The latitude where the occurrence was recorded, in decimal degrees.}
-#'   \item{decimalLongitude}{The longitude where the occurrence was recorded, in decimal degrees.}
-#'   \item{coordinateUncertaintyInMeters}{Uncertainty of the coordinates in meters.}
-#'   \item{coordinatePrecision}{Precision of the coordinates provided.}
-#'   \item{elevation}{The elevation where the occurrence was recorded, in meters.}
-#'   \item{elevationAccuracy}{Accuracy of the elevation measurement, in meters.}
-#'   \item{depth}{The depth at which the occurrence was recorded, in meters.}
-#'   \item{depthAccuracy}{Accuracy of the depth measurement, in meters.}
-#'   \item{eventDate}{The date the occurrence was recorded.}
-#'   \item{day}{The day the occurrence was recorded.}
-#'   \item{month}{The month the occurrence was recorded.}
-#'   \item{year}{The year the occurrence was recorded.}
-#'   \item{taxonKey}{The GBIF taxonomic key for the taxon.}
-#'   \item{speciesKey}{The GBIF taxonomic key for the species.}
-#'   \item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).
+#'   \item{gbif_download_citation}{A character string containing information on the source,
+#'   date, and method used to download occurrences from GBIF.}
+#'   \item{raw_download}{A data frame with 2,453 rows and 50 columns, containing raw
+#'   occurrence records. The columns include:
+#'     \describe{
+#'       \item{gbifID}{Unique GBIF occurrence identifier.}
+#'       \item{datasetKey}{UUID identifying the dataset in GBIF.}
+#'       \item{occurrenceID}{An identifier for the occurrence (often globally unique).}
+#'       \item{kingdom}{The kingdom to which the organism belongs.}
+#'       \item{phylum}{The phylum classification of the organism.}
+#'       \item{class}{The class of the organism.}
+#'       \item{order}{The order of the organism.}
+#'       \item{family}{The family of the organism.}
+#'       \item{genus}{The genus of the organism.}
+#'       \item{species}{The species name of the organism.}
+#'       \item{infraspecificEpithet}{The infraspecific epithet, such as subspecies or variety.}
+#'       \item{taxonRank}{The taxonomic rank of the organism.}
+#'       \item{scientificName}{The full scientific name including the genus and species.}
+#'       \item{verbatimScientificName}{The original scientific name as recorded in the data.}
+#'       \item{verbatimScientificNameAuthorship}{The original authorship of the scientific name.}
+#'       \item{countryCode}{The ISO country code where the occurrence was recorded.}
+#'       \item{locality}{The locality description for where the occurrence was recorded.}
+#'       \item{stateProvince}{The state or province where the occurrence was recorded.}
+#'       \item{occurrenceStatus}{The status of the occurrence (e.g., present, absent).}
+#'       \item{individualCount}{The number of individuals recorded.}
+#'       \item{publishingOrgKey}{UUID identifying the organization that published the data.}
+#'       \item{decimalLatitude}{The latitude where the occurrence was recorded, in decimal degrees.}
+#'       \item{decimalLongitude}{The longitude where the occurrence was recorded, in decimal degrees.}
+#'       \item{coordinateUncertaintyInMeters}{Uncertainty of the coordinates in meters.}
+#'       \item{coordinatePrecision}{Precision of the coordinates provided.}
+#'       \item{elevation}{The elevation where the occurrence was recorded, in meters.}
+#'       \item{elevationAccuracy}{Accuracy of the elevation measurement, in meters.}
+#'       \item{depth}{The depth at which the occurrence was recorded, in meters.}
+#'       \item{depthAccuracy}{Accuracy of the depth measurement, in meters.}
+#'       \item{eventDate}{The date the occurrence was recorded.}
+#'       \item{day}{The day the occurrence was recorded.}
+#'       \item{month}{The month the occurrence was recorded.}
+#'       \item{year}{The year the occurrence was recorded.}
+#'       \item{taxonKey}{The GBIF taxonomic key for the taxon.}
+#'       \item{speciesKey}{The GBIF taxonomic key for the species.}
+#'       \item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).}
+#'     }
 #'   }
+#' }
 #'
 #' @source <https://www.gbif.org/>
 "gbif_data"

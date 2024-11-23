@@ -30,7 +30,7 @@ Remotes:
 Depends: 
     R (>= 2.10)
 LazyData: true
-Suggests: 
+Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr

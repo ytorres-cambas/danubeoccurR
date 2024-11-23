@@ -7,11 +7,12 @@
 \format{
 \subsection{\code{gbif_data}}{
 
-A list of length = 2.
-gbif_data$gbif_download_citation contains information on the source, date and
-method used to download the occurrences ffrom GBIF.
-gbif_data$raw_download is a data frame with 2453 rows
-and 50 columns:
+A list of length 2:
+\describe{
+\item{gbif_download_citation}{A character string containing information on the source,
+date, and method used to download occurrences from GBIF.}
+\item{raw_download}{A data frame with 2,453 rows and 50 columns, containing raw
+occurrence records. The columns include:
 \describe{
 \item{gbifID}{Unique GBIF occurrence identifier.}
 \item{datasetKey}{UUID identifying the dataset in GBIF.}
@@ -48,7 +49,9 @@ and 50 columns:
 \item{year}{The year the occurrence was recorded.}
 \item{taxonKey}{The GBIF taxonomic key for the taxon.}
 \item{speciesKey}{The GBIF taxonomic key for the species.}
-\item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).
+\item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).}
+}
+}
 }
 }
 }
@@ -59,6 +62,7 @@ and 50 columns:
 gbif_data
 }
 \description{
-Occurrence records of Abramis brama and Acipenser baerii downloaded from GBIF
+Occurrence records of \strong{Abramis brama} and \strong{Acipenser baerii} downloaded from GBIF.
+The data is provided as a list containing metadata and raw occurrence records.
 }
 \keyword{datasets}
