@@ -48,12 +48,7 @@ extract_location_info <- function(data, latitude = "latitude", longitude = "long
       long = longitude,  # Dynamically select the longitude column
       method = "osm",
       full_results = TRUE
-    ) %>%
-      select(
-        county,
-        state,
-        country
-      )
+    )
   } else if (service == "google") {
     # Using Google Maps for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
