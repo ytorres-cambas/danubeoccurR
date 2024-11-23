@@ -14,23 +14,24 @@
 #' @importFrom tidygeocoder reverse_geocode
 #' @import dplyr
 #' @import purrr
+#' @import rlang
 #' @examples
 #' \dontrun{
 #' # Example usage with OpenStreetMap:
 #' # Data frame with points in Vienna and Belgrade
 #' points <- data.frame(
-#'   latitude = c(48.2082, 44.7866),
-#'   longitude = c(16.3738, 20.4489)
+#'   decimalLatitude = c(48.2082, 44.7866),
+#'   decimalLongitude = c(16.3738, 20.4489)
 #' )
 #'
-#' results <- extract_location_info(points, latitude = "latitude", longitude = "longitude", service = "osm")
+#' results <- extract_location_info(points, latitude = "decimalLatitude", longitude = "decimalLongitude", service = "osm")
 #' print(results)
 #' }
 #' @export
-extract_location_info <- function(data, latitude, longitude, service = "osm", api_key = NULL) {
+extract_location_info <- function(data, latitude = "latitude", longitude = "longitude", service = "osm", api_key = NULL) {
   # Check if the input data frame has the required columns
-  if (!latitude %in% names(data) | !longitude %in% names(data)) {
-    stop("Specified latitude and longitude columns do not exist in the data frame.")
+  if (!(latitude %in% names(data)) | !(longitude %in% names(data))) {
+    stop(paste("Specified latitude and longitude columns ('", latitude, "' and '", longitude, "') do not exist in the data frame.", sep = ""))
   }
 
   # Ensure Google API key is provided if using Google Maps
@@ -43,21 +44,22 @@ extract_location_info <- function(data, latitude, longitude, service = "osm", ap
     # Using OpenStreetMap for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
       .tbl = data,
-      lat = latitude,
-      long = longitude,
+      lat = latitude,  # Dynamically select the latitude column
+      long = longitude,  # Dynamically select the longitude column
       method = "osm",
       full_results = TRUE
     ) %>%
       select(
-             county,
-             state,
-             country)
+        county,
+        state,
+        country
+      )
   } else if (service == "google") {
     # Using Google Maps for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
       .tbl = data,
-      lat = latitude,
-      long = longitude,
+      lat = latitude,  # Use column names directly
+      long = longitude,  # Use column names directly
       method = "google",
       full_results = TRUE,
       api_key = api_key,

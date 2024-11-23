@@ -6,8 +6,8 @@
 \usage{
 extract_location_info(
   data,
-  latitude,
-  longitude,
+  latitude = "latitude",
+  longitude = "longitude",
   service = "osm",
   api_key = NULL
 )
@@ -36,11 +36,11 @@ Supports both OpenStreetMap (OSM) and Google Maps API.
 # Example usage with OpenStreetMap:
 # Data frame with points in Vienna and Belgrade
 points <- data.frame(
-  latitude = c(48.2082, 44.7866),
-  longitude = c(16.3738, 20.4489)
+  decimalLatitude = c(48.2082, 44.7866),
+  decimalLongitude = c(16.3738, 20.4489)
 )
 
-results <- extract_location_info(points, latitude = "latitude", longitude = "longitude", service = "osm")
+results <- extract_location_info(points, latitude = "decimalLatitude", longitude = "decimalLongitude", service = "osm")
 print(results)
 }
 }
