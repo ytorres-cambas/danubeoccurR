@@ -27,8 +27,8 @@
 
 #' Fish species occurrence records from GBIF
 #'
-#' Occurrence records of Hucho hucho, Alburnoides bipunctatus and
-#' Chondrostoma nasus downloaded from GBIF
+#' Occurrence records of *Hucho hucho*, *Alburnoides bipunctatus*, and
+#' *Chondrostoma nasus* downloaded from GBIF.
 #'
 #' @format ## `fish_data`
 #' A data frame with 1685 rows and 50 columns:
@@ -68,11 +68,12 @@
 #'   \item{year}{The year the occurrence was recorded.}
 #'   \item{taxonKey}{The GBIF taxonomic key for the taxon.}
 #'   \item{speciesKey}{The GBIF taxonomic key for the species.}
-#'   \item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).
-#'   }
+#'   \item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).}
+#' }
 #'
 #' @source <https://www.gbif.org/>
 "fish_data"
+
 
 #' Darwin Core Terms for Occurrence Datasets
 #'

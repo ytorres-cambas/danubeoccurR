@@ -44,7 +44,7 @@ A data frame with 1685 rows and 50 columns:
 \item{year}{The year the occurrence was recorded.}
 \item{taxonKey}{The GBIF taxonomic key for the taxon.}
 \item{speciesKey}{The GBIF taxonomic key for the species.}
-\item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).
+\item{basisOfRecord}{The basis of the record (e.g., HumanObservation, MachineObservation).}
 }
 }
 }
@@ -55,7 +55,7 @@ A data frame with 1685 rows and 50 columns:
 fish_data
 }
 \description{
-Occurrence records of Hucho hucho, Alburnoides bipunctatus and
-Chondrostoma nasus downloaded from GBIF
+Occurrence records of \emph{Hucho hucho}, \emph{Alburnoides bipunctatus}, and
+\emph{Chondrostoma nasus} downloaded from GBIF.
 }
 \keyword{datasets}
