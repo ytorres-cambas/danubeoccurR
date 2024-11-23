@@ -4,38 +4,33 @@
 #' corresponding municipality, province, and country (Darwin Core standard) using reverse geocoding.
 #' Supports both OpenStreetMap (OSM) and Google Maps API.
 #'
-#' @param latitude Numeric, latitude of the point.
-#' @param longitude Numeric, longitude of the point.
+#' @param data A data frame containing the latitude and longitude columns.
+#' @param latitude Name of the column for latitude in the `data` frame (as a string).
+#' @param longitude Name of the column for longitude in the `data` frame (as a string).
 #' @param service Character, geocoding service to use. Options are "osm" (OpenStreetMap) or "google". Default is "osm".
 #' @param api_key Character, the Google Maps API key (required if using Google Maps).
-#' @return A list with municipality, province, and country.
+#' @return A data frame with additional columns for municipality, province, and country.
 #'
 #' @importFrom tidygeocoder reverse_geocode
 #' @import dplyr
+#' @import purrr
 #' @examples
 #' \dontrun{
 #' # Example usage with OpenStreetMap:
-#' # Point in Vienna, Austria (Danube River)
-#' result_vienna <- extract_location_info(48.2082, 16.3738, service = "osm")
-#' print(result_vienna)
+#' # Data frame with points in Vienna and Belgrade
+#' points <- data.frame(
+#'   latitude = c(48.2082, 44.7866),
+#'   longitude = c(16.3738, 20.4489)
+#' )
 #'
-#' # Point in Belgrade, Serbia (Danube River)
-#' result_belgrade <- extract_location_info(44.7866, 20.4489, service = "osm")
-#' print(result_belgrade)
-#'
-#' # Example usage with Google Maps API (replace "your_api_key_here" with your actual API key):
-#' result_vienna_google <- extract_location_info(48.2082, 16.3738, service = "google", api_key = "your_api_key_here")
-#' print(result_vienna_google)
-#'
-#' result_belgrade_google <- extract_location_info(44.7866, 20.4489, service = "google", api_key = "your_api_key_here")
-#' print(result_belgrade_google)
+#' results <- extract_location_info(points, latitude = "latitude", longitude = "longitude", service = "osm")
+#' print(results)
 #' }
 #' @export
-extract_location_info <- function(latitude, longitude, service = "osm", api_key = NULL) {
-
-  # Check if latitude and longitude are numeric
-  if (!is.numeric(latitude) | !is.numeric(longitude)) {
-    stop("Latitude and longitude must be numeric.")
+extract_location_info <- function(data, latitude, longitude, service = "osm", api_key = NULL) {
+  # Check if the input data frame has the required columns
+  if (!latitude %in% names(data) | !longitude %in% names(data)) {
+    stop("Specified latitude and longitude columns do not exist in the data frame.")
   }
 
   # Ensure Google API key is provided if using Google Maps
@@ -47,49 +42,55 @@ extract_location_info <- function(latitude, longitude, service = "osm", api_key 
   if (service == "osm") {
     # Using OpenStreetMap for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
-      lat = latitude,
-      long = longitude,
+      data = data,
+      lat = !!sym(latitude),
+      long = !!sym(longitude),
       method = "osm"
     )
     # Extract municipality, province, and country
     location_info <- location_info %>%
-      dplyr::select(
+      dplyr::rename(
         municipality = address_municipality,
         province = address_state,
         country = address_country
-      ) %>%
-      dplyr::slice(1) # Take the first result
-
+      )
   } else if (service == "google") {
     # Using Google Maps for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
-      lat = latitude,
-      long = longitude,
+      data = data,
+      lat = !!sym(latitude),
+      long = !!sym(longitude),
       method = "google",
       full_results = TRUE,
       api_key = api_key
     )
 
-    # Extract address components
-    address_components <- location_info$address_components[[1]]
-
-    # Extract municipality, province, and country from Google API response
-    municipality <- address_components %>%
-      purrr::keep(~ "locality" %in% .x$types) %>%
-      purrr::pluck(1, "long_name", .default = NA)
-
-    province <- address_components %>%
-      purrr::keep(~ "administrative_area_level_1" %in% .x$types) %>%
-      purrr::pluck(1, "long_name", .default = NA)
-
-    country <- address_components %>%
-      purrr::keep(~ "country" %in% .x$types) %>%
-      purrr::pluck(1, "long_name", .default = NA)
-
-    location_info <- list(municipality = municipality, province = province, country = country)
+    # Extract address components from Google API response
+    location_info <- location_info %>%
+      mutate(
+        municipality = purrr::map_chr(
+          address_components, ~ purrr::pluck(
+            purrr::keep(.x, ~ "locality" %in% .x$types),
+            1, "long_name", .default = NA
+          )
+        ),
+        province = purrr::map_chr(
+          address_components, ~ purrr::pluck(
+            purrr::keep(.x, ~ "administrative_area_level_1" %in% .x$types),
+            1, "long_name", .default = NA
+          )
+        ),
+        country = purrr::map_chr(
+          address_components, ~ purrr::pluck(
+            purrr::keep(.x, ~ "country" %in% .x$types),
+            1, "long_name", .default = NA
+          )
+        )
+      )
   } else {
     stop("Unsupported service. Use 'osm' or 'google'.")
   }
 
-  return(as.list(location_info))
+  return(location_info)
 }
+

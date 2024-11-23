@@ -4,19 +4,27 @@
 \alias{extract_location_info}
 \title{Extract Municipality, Province, and Country using Latitude and Longitude}
 \usage{
-extract_location_info(latitude, longitude, service = "osm", api_key = NULL)
+extract_location_info(
+  data,
+  latitude,
+  longitude,
+  service = "osm",
+  api_key = NULL
+)
 }
 \arguments{
-\item{latitude}{Numeric, latitude of the point.}
+\item{data}{A data frame containing the latitude and longitude columns.}
 
-\item{longitude}{Numeric, longitude of the point.}
+\item{latitude}{Name of the column for latitude in the \code{data} frame (as a string).}
+
+\item{longitude}{Name of the column for longitude in the \code{data} frame (as a string).}
 
 \item{service}{Character, geocoding service to use. Options are "osm" (OpenStreetMap) or "google". Default is "osm".}
 
 \item{api_key}{Character, the Google Maps API key (required if using Google Maps).}
 }
 \value{
-A list with municipality, province, and country.
+A data frame with additional columns for municipality, province, and country.
 }
 \description{
 This function takes latitude and longitude values and returns the
@@ -26,19 +34,13 @@ Supports both OpenStreetMap (OSM) and Google Maps API.
 \examples{
 \dontrun{
 # Example usage with OpenStreetMap:
-# Point in Vienna, Austria (Danube River)
-result_vienna <- extract_location_info(48.2082, 16.3738, service = "osm")
-print(result_vienna)
+# Data frame with points in Vienna and Belgrade
+points <- data.frame(
+  latitude = c(48.2082, 44.7866),
+  longitude = c(16.3738, 20.4489)
+)
 
-# Point in Belgrade, Serbia (Danube River)
-result_belgrade <- extract_location_info(44.7866, 20.4489, service = "osm")
-print(result_belgrade)
-
-# Example usage with Google Maps API (replace "your_api_key_here" with your actual API key):
-result_vienna_google <- extract_location_info(48.2082, 16.3738, service = "google", api_key = "your_api_key_here")
-print(result_vienna_google)
-
-result_belgrade_google <- extract_location_info(44.7866, 20.4489, service = "google", api_key = "your_api_key_here")
-print(result_belgrade_google)
+results <- extract_location_info(points, latitude = "latitude", longitude = "longitude", service = "osm")
+print(results)
 }
 }
