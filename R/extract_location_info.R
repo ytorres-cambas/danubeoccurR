@@ -42,27 +42,27 @@ extract_location_info <- function(data, latitude, longitude, service = "osm", ap
   if (service == "osm") {
     # Using OpenStreetMap for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
-      data = data,
-      lat = !!sym(latitude),
-      long = !!sym(longitude),
-      method = "osm"
-    )
-    # Extract municipality, province, and country
-    location_info <- location_info %>%
-      dplyr::rename(
-        municipality = address_municipality,
-        province = address_state,
-        country = address_country
-      )
+      .tbl = data,
+      lat = latitude,
+      long = longitude,
+      method = "osm",
+      full_results = TRUE
+    ) %>%
+      select(latitude,
+             longitude,
+             county,
+             state,
+             country)
   } else if (service == "google") {
     # Using Google Maps for reverse geocoding
     location_info <- tidygeocoder::reverse_geocode(
-      data = data,
-      lat = !!sym(latitude),
-      long = !!sym(longitude),
+      .tbl = data,
+      lat = latitude,
+      long = longitude,
       method = "google",
       full_results = TRUE,
-      api_key = api_key
+      api_key = api_key,
+      language = "en"  # Set the language to English
     )
 
     # Extract address components from Google API response
@@ -93,4 +93,3 @@ extract_location_info <- function(data, latitude, longitude, service = "osm", ap
 
   return(location_info)
 }
-
