@@ -253,3 +253,19 @@
 #'
 #' @source <https://www.gbif.org/>
 "gbif_data"
+
+
+#' Danube River Basin Clipped from GADM Global Data
+#'
+#' This polygon represents the Danube River Basin, obtained by clipping global GADM administrative boundaries with the Danube River Basin extent. The dataset includes detailed administrative information for the region.
+#'
+#' @format ## `gadm_danube_basin`
+#' Simple feature collection with 13,724 features and 52 fields
+#' Geometry type: MULTIPOLYGON
+#' Dimension:     XY
+#' Bounding box:  xmin: 8.1525 ymin: 42.08333 xmax: 29.73583 ymax: 50.245
+#' Geodetic CRS:  WGS 84
+#'
+#' @source Derived from GADM global administrative boundaries and clipped using the Danube River Basin extent in QGIS.
+"gadm_danube_basin"
+

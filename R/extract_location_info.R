@@ -51,7 +51,7 @@ extract_location_info <- function(data, latitude = "latitude", longitude = "long
     ) %>%
     select(location_id,
            municipality = county,
-           province = state,
+           stateProvince = state,
            country)
 
   # Merge the geocoding results back to the original data

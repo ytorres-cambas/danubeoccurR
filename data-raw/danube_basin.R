@@ -4,6 +4,7 @@
 
 if (!require(tidyverse)) install.packages("tidyverse", dependencies = T)
 if (!require(sf)) install.packages("sf", dependencies = T)
+if (!require(terra)) install.packages("terra", dependencies = T)
 if (!require(remotes)) install.packages("remotes", dependencies = T)
 remotes::install_github("glowabio/hydrographr")
 library(hydrographr)
@@ -51,15 +52,16 @@ for(itile in basin_dir) {
                                        "_tmp.gpkg"), sep="/"))
 }
 
-# Merge filtered GeoPackage tiles
-merge_tiles(tile_dir = temp,
+# Merge filtered GeoPackage tiles. Save and correct holes in QGIS. Import
+polygons <- merge_tiles(tile_dir = temp,
             tile_names = list.files(temp, full.names = FALSE,
                                     pattern = "basin_.+_tmp.gpkg$"),
             out_dir = output_hydro90m,
             file_name = "danube_basin.gpkg",
             name = "ID",
-            read = FALSE)
+            read = TRUE)
 
+danube_basin <- st_read("C:/Users/torres/Nextcloud/projects/Danube4all/WP3/hydrography90m/danube_basin.gpkg")
 
 # Create data set
 usethis::use_data(danube_basin, overwrite = TRUE)
