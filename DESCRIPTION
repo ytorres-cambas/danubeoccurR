@@ -1,34 +1,45 @@
 Package: danubeoccurR
-Title: Tools for Downloading, Cleaning, and Managing Fish Occurrence Records for the Danube River Basin
+Title: Tools for Downloading, Cleaning, and Managing Fish Occurrence
+    Records for the Danube River Basin
 Version: 0.0.0.9000
 Authors@R: 
     person("Yusdiel", "Torres-Cambas", , "yusdiel.torres-cambas@igb-berlin.de", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           comment = c(ORCID = "0000-0003-2312-2329"))
+Description: This R package provides a set of tools to download, clean, and
+    standardize species occurrence records, with a focus on fish species in the     
+    Danube River Basin. While primarily designed for Danube fish data,
+    the package can be applied to species occurrence data more broadly. It 
+    includes functions for both experienced R users and those with less coding
+    experience, offering user-friendly interfaces and interactive features via
+    Shiny apps, making it accessible to a wider audience.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+Depends: 
+    R (>= 2.10)
 Imports: 
-    dplyr (>= 1.0.0),
-    lubridate (>= 1.7.10),
-    terra,
+    CoordinateCleaner,
     data.table,
+    dplyr (>= 1.0.0),
     leaflet,
     leaflet.extras,
+    lubridate (>= 1.7.10),
+    magrittr,
     miniUI,
     rgbif,
     rvertnet,
     sf,
     shiny,
-    CoordinateCleaner,
-    magrittr
-Depends: 
-    R (>= 2.10)
-LazyData: true
+    specleanr,
+    terra
+Remotes:
+  AnthonyBasooma/specleanr
 Suggests:
     knitr,
     rmarkdown
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr
 Config/Needs/website: rmarkdown
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
