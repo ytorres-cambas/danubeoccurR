@@ -77,7 +77,7 @@ clean_gbif <- function(df,
   if (!is.null(coordinatePrecision)) {
     df <- df %>%
       dplyr::filter(is.na(!!rlang::sym("coordinatePrecision")) |
-                      !!rlang::sym("coordinatePrecision") < coordinatePrecision)
+                      !!rlang::sym("coordinatePrecision") > coordinatePrecision)
   }
 
   # Remove records based on coordinateUncertaintyInMeters
