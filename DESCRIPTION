@@ -22,11 +22,8 @@ Imports:
     rvertnet,
     sf,
     shiny,
-    specleanr (>= 0.1.0),
     CoordinateCleaner,
     magrittr
-Remotes: 
-    AnthonyBasooma/specleanr
 Depends: 
     R (>= 2.10)
 LazyData: true
@@ -34,3 +31,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Config/Needs/website: rmarkdown
