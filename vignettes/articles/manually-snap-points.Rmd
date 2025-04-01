@@ -22,8 +22,8 @@ library(dplyr)
 
 ## Step 1: Install the Package from GitHub
 
-To get started, you need to install the danubeoccurR, hydrographr and specleanr
-packages from GitHub. You can do this using the devtools package:
+To get started, you need to install the danubeoccurR
+package from GitHub. You can do this using the devtools package:
 ```{r, eval=FALSE}
 # Install the devtools package if you haven't already
 install.packages("devtools")
@@ -34,19 +34,38 @@ library(danubeoccurR)
 library(dplyr)
 ```
 
-## Step 2: 
+## Step 2: Prepare a dataframe with coordinates
 
-```{r, eval=TRUE}
+In this step, we create a dataframe containing point coordinates that need to be
+corrected. The dataframe includes unique IDs and latitude/longitude values for 
+two locations, Vienna and Belgrade. The snap_points_on_map() function is then 
+used to align these points to the correct locations on the map.
+
+```{r, eval=FALSE}
 coords <- data.frame(id = 1:2, 
                      lat = c(48.2082, 44.8176),   # Vienna, Belgrade
                      lng = c(16.3738, 20.4633))    # Vienna, Belgrade 
 updated_coords <- snap_points_on_map(coords)
 ```
 
-## Step 3:
+## Step 3: Launch the app and snap points manually
 
-```{r, eval=TRUE}
-#Visualize dataframe with original and new coordinates after snapping
+To manually adjust the coordinates, we use a Shiny app that enables interactive point correction. The app allows users to drag and drop points to their desired locations on the map. Once adjustments are made, clicking the 'Done' button saves the updated coordinates.
+
+Below is a screenshot of the app interface, where points can be manually moved to their correct positions:
+
+<div style="max-width:100%; height:auto; overflow:auto; border:1px solid #ccc; padding:5px;">
+  <img src="manual_snap1.png" style="width:1200px; height:auto;">
+</div>
+
+## Step 4: Visualize dataframe with original and updated coordinates
+
+After adjusting the points in the Shiny app, the modified coordinates are stored in the updated_coords dataframe. This dataframe contains additional columns, new_lat and new_lng, which represent the corrected latitude and longitude values.
+
+This ensures that all points are properly aligned with their intended locations, improving data accuracy for downstream analyses.
+
+```{r, eval=FALSE}
+# Display dataframe with original and updated coordinates
 print(updated_coords)
 ```
 
