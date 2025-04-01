@@ -1,6 +1,12 @@
 ---
-title: "manually-snap-points"
+title: "Manually snap species occurrence points"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Manually snap species occurrence points}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -9,6 +15,38 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(danubeoccurR)
+library(dplyr)
 ```
+
+## Step 1: Install the Package from GitHub
+
+To get started, you need to install the danubeoccurR, hydrographr and specleanr
+packages from GitHub. You can do this using the devtools package:
+```{r, eval=FALSE}
+# Install the devtools package if you haven't already
+install.packages("devtools")
+
+# Install the danubeoccurR package from GitHub
+devtools::install_github("ytorres-cambas/danubeoccurR")
+library(danubeoccurR)
+library(dplyr)
+```
+
+## Step 2: 
+
+```{r, eval=TRUE}
+coords <- data.frame(id = 1:2, 
+                     lat = c(48.2082, 44.8176),   # Vienna, Belgrade
+                     lng = c(16.3738, 20.4633))    # Vienna, Belgrade 
+updated_coords <- snap_points_on_map(coords)
+```
+
+## Step 3:
+
+```{r, eval=TRUE}
+#Visualize dataframe with original and new coordinates after snapping
+print(updated_coords)
+```
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_taxonomy_info.R
 \name{get_taxonomy_info}
 \alias{get_taxonomy_info}
-\title{Get Taxonomy Information Including Species, Year, and Author}
+\title{Get Taxonomy Information Including Genus, Family and Order}
 \usage{
 get_taxonomy_info(
   species,
@@ -22,7 +22,7 @@ get_taxonomy_info(
 A data frame with taxonomic categories including species, year, author, genus, family, and order.
 }
 \description{
-This function returns the genus, family, order, and additional information (species, year, author)
+This function returns the genus, family, order
 for each species in the input vector. It queries multiple sources (e.g., GBIF, ITIS, FishBase, COL, NCBI)
 to retrieve the taxonomic information.
 If \code{all_categories} is set to TRUE, it will return all available taxonomic ranks.

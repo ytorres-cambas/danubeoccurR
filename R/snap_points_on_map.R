@@ -20,6 +20,7 @@
 #' lat = c(48.2082, 44.8176),   # Vienna, Belgrade
 #' lng = c(16.3738, 20.4633))    # Vienna, Belgrade
 #' updated_coords <- snap_points_on_map(coords)
+#' @export
 
 snap_points_on_map <- function(coords_df) {
 
