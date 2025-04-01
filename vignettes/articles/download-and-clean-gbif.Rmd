@@ -1,11 +1,12 @@
 ---
-title: "Downloading and Cleaning Fish Species Occurrences from GBIF for the Danube River Basin"
+title: "General workflow to collate, format, data enrichment and check"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Downloading and Cleaning Fish Species Occurrences from GBIF for the Danube River Basin}
+  %\VignetteIndexEntry{General workflow to collate, format, data enrichment and check}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -18,6 +19,7 @@ knitr::opts_chunk$set(
 library(danubeoccurR)
 library(hydrographr)
 library(specleanr)
+library(dplyr)
 ```
 
 ## Introduction
@@ -53,6 +55,8 @@ devtools::install_github("AnthonyBasooma/specleanr")
 library(danubeoccurR)
 library(hydrographr)
 library(specleanr)
+library(dplyr)
+library(sf)
 ```
 
 ## Step 2: Downloading GBIF Data
@@ -184,7 +188,132 @@ print(gbif_name_checked)
 
 As you can see, the species names in the `species` column, which correspond to the species names in our dataset, match the names in the `speciescheck` column from FishBase, indicating that no changes are required.
 
-## Step 7: Extracting sub-catchment ids
+## Step 7: Add additional taxonomic information
+
+If taxonomic information for Genus, Family, or Order is missing from some occurrences, it can be retrieved from FishBase and added. While the example dataset does not have missing taxonomic information, its classification differs from that used in FishBase. Therefore, we will update the taxonomic classification in the example dataset based on the information retrieved from FishBase. We will use the species name list obtained in the previous step after verifying species names against FishBase.
+
+```{r, eval=TRUE}
+# Return genus, family and order of the species in the input vector. 
+tax_info <- get_taxonomy_info(species = gbif_name_checked$speciescheck, sources = "fishbase")
+
+# Visualize result
+print(tax_info)
+
+# Visualize taxonomic classification used in the example dataset.
+gbif_filtered %>%
+  select(species, genus, family, order) %>%
+  distinct(species, .keep_all = TRUE) %>%
+  print()
+```
+
+The result is a data frame containing columns for Species, Genus, Family, and Order. In this case, the species **Abramis brama** is classified under the Family Leuciscidae; however, it was classified under Cyprinidae in the example dataset downloaded from GBIF. We will now proceed to update the Family classification of **Abramis brama**.
+
+```{r, eval=TRUE}
+# Update taxonomic information
+gbif_filtered[gbif_filtered$family=="Cyprinidae", "family"] <- "Leuciscidae"
+```
+
+## Step 8: Add administrative information
+Administrative information, such as country name and lower administrative levels (e.g., administrative levels 1 and 2 from the Database of Global Administrative Areas), can be added by performing a spatial join between points and GADM Administrative Boundaries using the `spatial_join_gadm()` function. If a vector layer is not supplied but an ISO3 country code is provided, the function attempts to download GPKG files from GADM and use them for the spatial join. If the download fails due to a slow connection, the `timeout` argument value can be increased to allow more time for the process. As a final step, the columns are renamed to align with [Darwin Core](https://dwc.tdwg.org/) standards. In this case, GADM administrative levels 1 and 2 correspond to the [Darwin Core](https://dwc.tdwg.org/) terms `stateProvince` and `county`, respectively. Therefore, we will rename the columns accordingly.
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Download information from Database of Global Administrative Areas for each country in the Danube River Basin
+# ISO3 country codes
+country_codes = c("ALB", "AUT", "BIH", "BGR", "CHE", "CZE", "DEU", "HUN","ITA", "HRV",
+                      "MDA", "MKD","MNE", "POL", "ROU", "SRB", "SVK", "SVN", "UKR", "XKO")
+
+## Folder to save temporal files
+temp <-  paste0(getwd(), "/temp/")
+if(!dir.exists(temp)) dir.create(temp)
+
+# Convert input data frame to an sf object
+  points_sf <- st_as_sf(
+    gbif_filtered,
+    coords = c("decimalLongitude", "decimalLatitude"),
+    crs = 4326
+  )
+
+      # Initialize a list to store administrative sf objects
+    admin_sf_list <- list()
+
+    tryCatch({
+      for (country_code in country_codes) {
+        # gadm_url <- paste0(
+        #   "https://geodata.ucdavis.edu/gadm/gadm4.1/gpkg/gadm41_",
+        #   country_code,
+        #   ".gpkg"
+        # )
+        gadm_file <- gsub("\\\\", "/", file.path(temp, paste0("gadm41_", country_code, ".gpkg")))
+        # download.file(gadm_url, gadm_file, mode = "wb")
+        # message(paste("Downloaded GADM file for", country_code))
+
+        layers <- st_layers(gadm_file)$name
+        layer <- if ("ADM_ADM_2" %in% layers) {
+          st_read(gadm_file, layer = "ADM_ADM_2", quiet = TRUE)
+        } else if ("ADM_ADM_1" %in% layers) {
+          st_read(gadm_file, layer = "ADM_ADM_1", quiet = TRUE)
+        } else if ("ADM_ADM_0" %in% layers) {
+          st_read(gadm_file, layer = "ADM_ADM_0", quiet = TRUE)
+        } else {
+          warning(paste("No suitable administrative layer found for", country_code))
+          NULL
+        }
+
+        if (!is.null(layer)) {
+          admin_sf_list[[country_code]] <- layer
+        }
+      }
+
+      if (length(admin_sf_list) == 0) {
+        stop("No valid administrative layers found for any of the countries.")
+      }
+      
+      # Merge administrative layers
+      merged_admin_sf <- do.call(bind_rows, admin_sf_list)
+      
+      # Join occurrence points and administrative layers
+      joined_sf <- st_join(points_sf, merged_admin_sf, join = st_within)
+      
+    }, finally = {
+      unlink(temp_dir, recursive = TRUE)
+      message("Temporary files deleted.")
+    })
+    
+    # Convert back to data frame
+  result <- joined_sf %>%
+    st_drop_geometry() %>%
+    mutate(
+      decimalLongitude = st_coordinates(points_sf)[, "X"],
+      decimalLatitude = st_coordinates(points_sf)[, "Y"]
+    )
+  # Rename columns
+  admin_4_gbif  <- result %>%
+    select(-stateProvince) %>%
+    rename(country = COUNTRY,
+           county = NAME_2,
+           stateProvince = NAME_1)
+``` 
+
+```{r, eval=FALSE}
+# Perform a spatial join of points with GADM Administrative Boundaries 
+  admin_4_gbif <-  spatial_join_gadm(
+  coords_df = gbif_filtered,
+  country_codes = c("ALB", "AUT", "BIH", "BGR", "CHE", "CZE", "DEU", "HUN","ITA", "HRV",
+                      "MDA", "MKD","MNE", "POL", "ROU", "SRB", "SVK", "SVN", "UKR", "XKO"),
+  lat_col = "decimalLatitude",
+  lon_col = "decimalLongitude",
+  timeout = 1000)
+# Rename columns
+admin_4_gbif <- admin_4_gbif %>%
+    select(-stateProvince) %>% # delete original column
+    rename(country = COUNTRY,
+           county = NAME_2,
+           stateProvince = NAME_1)
+
+```
+
+## Step 9: Extracting sub-catchment ids
 
 Next, we will extract the IDs of the sub-catchments where each occurrence is located and add a new column with these IDs to the dataset. To achieve this, we will use the `extract_ids()` function from the <a href="https://github.com/glowabio/hydrographr" target="_blank">hydrographr package</a>. The sub-catchment layer was generated from the <a href="https://essd.copernicus.org/articles/14/4525/2022/essd-14-4525-2022.html" target="_blank">Hydrography90m dataset</a> by downloading the tiles corresponding to the Danube River Basin and cropping them using functions from the <a href="https://github.com/glowabio/hydrographr" target="_blank">hydrographr package</a>. 
 
@@ -236,7 +365,7 @@ merge_tiles(tile_dir = temp,
                                     full.names = FALSE,
                                     pattern = "_tmp.tif"),
             out_dir = output_hydro90m,
-            file_name = "hydro90m_subcatch_danube.tif",
+            file_name = "subcatch_danube.tif",
             name = "ID",
             read = FALSE,
             compression = "high",
@@ -245,14 +374,14 @@ merge_tiles(tile_dir = temp,
 
 Now, we are ready to extract the sub-catchment IDs.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 # Create unique ids for rows in gbif_filtered. It is required by the function
 # extract_ids. It will be removed later
-gbif_filtered$id_col <- seq(1:nrow(gbif_filtered))
+admin_4_gbif$id_col <- seq(1:nrow(admin_4_gbif))
 
 # Extract sub-catchment IDs 
 ids_df <- extract_ids(
-    data = gbif_filtered,
+    data = admin_4_gbif,
     lon = "decimalLongitude",
     lat = "decimalLatitude",
     id = "id_col",
@@ -270,47 +399,89 @@ if(length(which(is.na(ids_df$subcatchment_id))) == 0) {
 }
 
 # New column with sub-catchment IDs
-gbif_filtered <- gbif_filtered %>%
+gbif_subcID <- admin_4_gbif %>%
   mutate(subcatchmentID = ids_df$subcatchment_id) %>%
   select(-id_col) # delete column with row ids 
 
-# Preview the data set
-head(gbif_filtered)
 ```
 
-## Step 8: Detecting environmental outliers
+# Step 10 Add occurrence IDs 
+To ensure each record has a unique and persistent identifier, we assigned Universal Unique Identifiers (UUIDs) using the `generate_global_identifier()` function. This aligns with Darwin Core standards and facilitates data integration across biodiversity databases.
 
-In the context of Species Distribution Models (SDMs), environmental outliers 
-refer to species occurrence records that are associated with unusual or extreme
-environmental conditions compared to the majority of other occurrence points. 
-These outliers may occur due to various reasons, such as:
-
-- Measurement Errors: Incorrect or inaccurate recording of environmental data 
-(e.g., temperature, precipitation) at a specific location.
-
-- Spatial Errors: Geographical misplacement of occurrence points, leading to 
-mismatches between species records and their true environmental conditions.
-
-- Natural Anomalies: Rare, but genuine occurrences of a species in unusual or 
-extreme environments, which might be biologically significant but differ from 
-the conditions of the majority of occurrences.
-
-In SDMs, these environmental outliers can affect model performance and 
-predictions by skewing the relationships between species occurrences and 
-environmental variables. Consequently, they may lead to:
-
-- Overfitting: The model may attempt to capture patterns that are specific to 
-the outlier points but not reflective of the broader ecological niche of 
-the species.
-
-- Erroneous Predictions: The model might predict unsuitable areas as 
-potentially habitable based on outlier values.
-
-## Step 4: Creating a metadata file
+First, we identified records that lacked an `occurrenceID`. For these records, we generated and assigned a UUID using the `generate_global_identifier()` function. This step ensures that all occurrences have a globally unique identifier, improving traceability and interoperability with other datasets.
 
 ```{r, eval=FALSE}
-# 
+# Identify records that lack an occurrenceID
+indx <- which(gbif_subcID$occurrenceID=="")
+
+# Generate occurrence IDs
+ids <- generate_global_identifier(n = length(indx))
+
+# Add ids
+gbif_subcID[indx,"occurrenceID"] <- ids
 ```
+
+## Step 11: Detecting Environmental Outliers
+
+In the context of Species Distribution Models (SDMs), **environmental outliers** refer to species occurrence records that are associated with extreme or unusual environmental conditions, diverging significantly from the majority of other occurrence points. These outliers may arise for several reasons, including:
+
+- **Measurement Errors**: Inaccuracies in environmental data (e.g., temperature, precipitation) recorded at a specific location, leading to false readings.
+  
+- **Spatial Errors**: Misplacement of occurrence points, which results in a mismatch between species records and their true environmental conditions.
+  
+- **Natural Anomalies**: Rare occurrences of species in unusual or extreme environments, which may be biologically significant but differ from the typical conditions where most occurrences are found.
+
+Environmental outliers can impact SDMs by distorting the relationships between species occurrences and environmental variables. This may result in:
+
+- **Overfitting**: The model may overemphasize patterns specific to the outlier points, misrepresenting the broader ecological niche of the species.
+  
+- **Erroneous Predictions**: The model might incorrectly identify unsuitable areas as habitable, based on the outlier values.
+
+To address this, we can use the `multidetect()` function from the [spcleanr](https://github.com/AnthonyBasooma/specleanr) package to detect environmental outliers. Once identified, a remark is added in the `occurrenceRemarks` field, indicating that the record is a potential environmental outlier.
+
+
+```{r, eval=FALSE}
+gbif_subcID
+gbif_det_outlier <- 
+```
+
+## Step 12 Check data format
+
+Finally, to ensure data consistency and compliance with Darwin Core standards, we will perform a series of format checks.
+
+* Column names were verified using the `check_column_name()` function to confirm they conform to Darwin Core terms as well as additional custom names.
+
+* Year values were checked for missing entries and validated to be numeric and within an acceptable range using the `check_year_column()` function. The function output is a list of:
+  ** `missing_values`: Indices of missing values in the year column.
+  ** `invalid_years`: Indices of values that fall outside the valid year range.
+  ** `updated_df`: A data frame with the updated year values and a flag indicating
+
+* Coordinate validation was conducted using the `check_coordinates()` function to ensure latitude and longitude values follow the correct decimal degree format (WGS84).
+
+These checks help maintain data quality and facilitate seamless integration with biodiversity databases.
+
+```{r, eval=FALSE}
+# Check column name
+check_column_name(df_input = ,
+                  standard_terms = c(dwc_names, "waterBodyType", "gbifID", "subcatchmentID"),
+                               verbose = TRUE)
+
+# Check for missing values, ensure that values are numeric and fall within a valid range. The result is a list with three elements that store "missing_values",
+gbif_year_checked <- check_year_column(df = gbif_det_outlier,
+                  col_year = "year",
+                  year_range = c(1800, 2024))
+print(gbif_year_checked$missing_values) 
+print(gbif_year_checked$invalid_years)
+
+# Check coordinates format and ensure they are numeric data type
+gbif_coord_checked <- check_coordinates(df = gbif_year_checked$updated_df,
+                                        lat_col = "decimalLatitude",
+                                        lon_col = "decimalLongitude",
+                                        convert_to_numeric = TRUE,
+                                        verbose = TRUE)
+
+```
+
 
 ## Conclusion
 

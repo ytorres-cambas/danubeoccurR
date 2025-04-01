@@ -18,7 +18,7 @@
 #'   from the GADM data.
 #'
 #' @importFrom sf st_as_sf st_read st_join st_within st_drop_geometry st_coordinates
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate bind_rows
 #' @export
 
 spatial_join_gadm <- function(
@@ -88,7 +88,7 @@ spatial_join_gadm <- function(
         stop("No valid administrative layers found for any of the countries.")
       }
 
-      merged_admin_sf <- do.call(rbind, admin_sf_list)
+      merged_admin_sf <- do.call(bind_rows, admin_sf_list)
       joined_sf <- st_join(points_sf, merged_admin_sf, join = st_within)
     }, finally = {
       unlink(temp_dir, recursive = TRUE)

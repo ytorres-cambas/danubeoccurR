@@ -1,6 +1,6 @@
-#' Get Taxonomy Information Including Species, Year, and Author
+#' Get Taxonomy Information Including Genus, Family and Order
 #'
-#' This function returns the genus, family, order, and additional information (species, year, author)
+#' This function returns the genus, family, order
 #' for each species in the input vector. It queries multiple sources (e.g., GBIF, ITIS, FishBase, COL, NCBI)
 #' to retrieve the taxonomic information.
 #' If `all_categories` is set to TRUE, it will return all available taxonomic ranks.
