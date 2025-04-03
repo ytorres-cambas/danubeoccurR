@@ -18,9 +18,12 @@ and dragging markers. It returns a data frame with old and new coordinates,
 and indicates whether the coordinates were updated.
 }
 \examples{
+\dontrun{
 coords <- data.frame(
 id = 1:2,
 lat = c(48.2082, 44.8176),   # Vienna, Belgrade
 lng = c(16.3738, 20.4633))    # Vienna, Belgrade
 updated_coords <- snap_points_on_map(coords)
+}
+
 }

@@ -37,8 +37,6 @@ Before starting, ensure that you have:
 
 Additionally, ensure that you follow the <a href="https://glowabio.github.io/hydrographr/articles/hydrographr.html" target="_blank">installation guideline</a> of the package `hydrographr`  for your operating system.
 
-
-    
 ## Step 1: Install the Package from GitHub
 
 To get started, you need to install the danubeoccurR, hydrographr and specleanr
@@ -168,12 +166,11 @@ visualize_points(points_df = gbif_filtered,
                  layer = danube_basin)
 ```
 
-
 ## Step 6: Checking species names
 
 To clean the species names and ensure consistency with FishBase, we will use the `check_names()` function from the package `specleanr`. This function matches species names to FishBase and, by default, returns the accepted name if a synonym is provided. The function also checks for spelling errors and suggests the closest match in FishBase based on the similarity threshold defined by the pct parameter. We will use the default pct value of 90 that indicates a match of 90% or above is required.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 # Check species names for inconsistencies 
 gbif_name_checked <- check_names(data = gbif_filtered,
                                  colsp = "species",
@@ -192,7 +189,7 @@ As you can see, the species names in the `species` column, which correspond to t
 
 If taxonomic information for Genus, Family, or Order is missing from some occurrences, it can be retrieved from FishBase and added. While the example dataset does not have missing taxonomic information, its classification differs from that used in FishBase. Therefore, we will update the taxonomic classification in the example dataset based on the information retrieved from FishBase. We will use the species name list obtained in the previous step after verifying species names against FishBase.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 # Return genus, family and order of the species in the input vector. 
 tax_info <- get_taxonomy_info(species = gbif_name_checked$speciescheck, sources = "fishbase")
 
@@ -208,15 +205,16 @@ gbif_filtered %>%
 
 The result is a data frame containing columns for Species, Genus, Family, and Order. In this case, the species **Abramis brama** is classified under the Family Leuciscidae; however, it was classified under Cyprinidae in the example dataset downloaded from GBIF. We will now proceed to update the Family classification of **Abramis brama**.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 # Update taxonomic information
 gbif_filtered[gbif_filtered$family=="Cyprinidae", "family"] <- "Leuciscidae"
 ```
 
 ## Step 8: Add administrative information
+
 Administrative information, such as country name and lower administrative levels (e.g., administrative levels 1 and 2 from the Database of Global Administrative Areas), can be added by performing a spatial join between points and GADM Administrative Boundaries using the `spatial_join_gadm()` function. If a vector layer is not supplied but an ISO3 country code is provided, the function attempts to download GPKG files from GADM and use them for the spatial join. If the download fails due to a slow connection, the `timeout` argument value can be increased to allow more time for the process. As a final step, the columns are renamed to align with [Darwin Core](https://dwc.tdwg.org/) standards. In this case, GADM administrative levels 1 and 2 correspond to the [Darwin Core](https://dwc.tdwg.org/) terms `stateProvince` and `county`, respectively. Therefore, we will rename the columns accordingly.
 
-```{r, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Download information from Database of Global Administrative Areas for each country in the Danube River Basin
 # ISO3 country codes
@@ -405,7 +403,8 @@ gbif_subcID <- admin_4_gbif %>%
 
 ```
 
-# Step 10 Add occurrence IDs 
+## Step 10: Add occurrence IDs 
+
 To ensure each record has a unique and persistent identifier, we assigned Universal Unique Identifiers (UUIDs) using the `generate_global_identifier()` function. This aligns with Darwin Core standards and facilitates data integration across biodiversity databases.
 
 First, we identified records that lacked an `occurrenceID`. For these records, we generated and assigned a UUID using the `generate_global_identifier()` function. This step ensures that all occurrences have a globally unique identifier, improving traceability and interoperability with other datasets.
@@ -421,33 +420,10 @@ ids <- generate_global_identifier(n = length(indx))
 gbif_subcID[indx,"occurrenceID"] <- ids
 ```
 
-## Step 11: Detecting Environmental Outliers
 
-In the context of Species Distribution Models (SDMs), **environmental outliers** refer to species occurrence records that are associated with extreme or unusual environmental conditions, diverging significantly from the majority of other occurrence points. These outliers may arise for several reasons, including:
+## Step 11 Check data format and completeness
 
-- **Measurement Errors**: Inaccuracies in environmental data (e.g., temperature, precipitation) recorded at a specific location, leading to false readings.
-  
-- **Spatial Errors**: Misplacement of occurrence points, which results in a mismatch between species records and their true environmental conditions.
-  
-- **Natural Anomalies**: Rare occurrences of species in unusual or extreme environments, which may be biologically significant but differ from the typical conditions where most occurrences are found.
-
-Environmental outliers can impact SDMs by distorting the relationships between species occurrences and environmental variables. This may result in:
-
-- **Overfitting**: The model may overemphasize patterns specific to the outlier points, misrepresenting the broader ecological niche of the species.
-  
-- **Erroneous Predictions**: The model might incorrectly identify unsuitable areas as habitable, based on the outlier values.
-
-To address this, we can use the `multidetect()` function from the [spcleanr](https://github.com/AnthonyBasooma/specleanr) package to detect environmental outliers. Once identified, a remark is added in the `occurrenceRemarks` field, indicating that the record is a potential environmental outlier.
-
-
-```{r, eval=FALSE}
-gbif_subcID
-gbif_det_outlier <- 
-```
-
-## Step 12 Check data format
-
-Finally, to ensure data consistency and compliance with Darwin Core standards, we will perform a series of format checks.
+To ensure data consistency and compliance with Darwin Core standards, we will perform a series of format checks.
 
 * Column names were verified using the `check_column_name()` function to confirm they conform to Darwin Core terms as well as additional custom names.
 
@@ -459,6 +435,7 @@ Finally, to ensure data consistency and compliance with Darwin Core standards, w
 * Coordinate validation was conducted using the `check_coordinates()` function to ensure latitude and longitude values follow the correct decimal degree format (WGS84).
 
 These checks help maintain data quality and facilitate seamless integration with biodiversity databases.
+Finally, to ensure data completeness we will verify that each record includes at least a species name, date, and coordinates.
 
 ```{r, eval=FALSE}
 # Check column name
@@ -480,8 +457,10 @@ gbif_coord_checked <- check_coordinates(df = gbif_year_checked$updated_df,
                                         convert_to_numeric = TRUE,
                                         verbose = TRUE)
 
-```
+# Check data completeness
+  
 
+```
 
 ## Conclusion
 

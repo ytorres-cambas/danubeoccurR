@@ -20,6 +20,24 @@ library(danubeoccurR)
 library(dplyr)
 ```
 
+## Introduction
+
+Georeferencing errors are a common issue in biodiversity datasets, potentially 
+affecting ecological analyses and conservation decisions. The `danubeocurR` 
+package provides an interactive tool to manually correct occurrence records with
+incorrect spatial coordinates. This vignette demonstrates how to launch and use 
+the interactive application to adjust occurrence points, ensuring accurate 
+spatial representation.
+
+By using this tool, users can visually inspect and move points to their correct 
+locations on a map, improving the quality and reliability of occurrence data. 
+This functionality is particularly useful when dealing with historical records, 
+ambiguous locality descriptions, or systematic errors in coordinate assignment.
+
+In the following sections, we will walk through the steps to launch the 
+application, load occurrence data, and manually correct erroneous points before
+saving the updated dataset.
+
 ## Step 1: Install the Package from GitHub
 
 To get started, you need to install the danubeoccurR
@@ -55,17 +73,17 @@ To manually adjust the coordinates, we use a Shiny app that enables interactive 
 Below is a screenshot of the app interface, where points can be manually moved to their correct positions:
 
 <div style="max-width:100%; height:auto; overflow:auto; border:1px solid #ccc; padding:5px;">
-  <img src="manual_snap1.png" style="width:1200px; height:auto;">
+  <img src="manual_snap1.png" alt="Screenshot of manual snapping interface in the app" style="width:1200px; height:auto;">
 </div>
+
 
 ## Step 4: Visualize dataframe with original and updated coordinates
 
 After adjusting the points in the Shiny app, the modified coordinates are stored in the updated_coords dataframe. This dataframe contains additional columns, new_lat and new_lng, which represent the corrected latitude and longitude values.
-
-This ensures that all points are properly aligned with their intended locations, improving data accuracy for downstream analyses.
 
 ```{r, eval=FALSE}
 # Display dataframe with original and updated coordinates
 print(updated_coords)
 ```
 
+This ensures that all points are properly aligned with their intended locations, improving data accuracy for downstream analyses.

@@ -12,8 +12,7 @@ Description: This R package provides a set of tools to download, clean, and
     includes functions for both experienced R users and those with less coding
     experience, offering user-friendly interfaces and interactive features via
     Shiny apps, making it accessible to a wider audience.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: GPL (>= 3)
 Depends: 
     R (>= 2.10)
 Imports: 
@@ -43,3 +42,4 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+URL: https://ytorres-cambas.github.io/danubeoccurR/
