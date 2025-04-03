@@ -27,8 +27,10 @@
 #' If not specified, the metadata file will be saved in the same folder as the file.
 #'
 #' @return A metadata file saved in the specified metadata folder or the same folder as the file if `metadata_folder` is not provided.
+#'
+#'
 #' @examples
-
+#' \dontrun{
 #'    create_metadata_file(file_path = "data/my_data.csv",
 #'                         description = "Sample dataset",
 #'                         author = "John Doe",
@@ -40,6 +42,8 @@
 #'                         repo = "https://github.com/repo",
 #'                         doi = "10.1234/zenodo.1234567",
 #'                         notes = "No additional notes")
+#' }
+#' @export
 
 create_metadata_file <- function(file_path,
                                  description,

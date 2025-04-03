@@ -65,6 +65,7 @@ A metadata file saved in the specified metadata folder or the same folder as the
 This function generates a metadata file describing a specified file stored in a folder.
 }
 \examples{
+\dontrun{
    create_metadata_file(file_path = "data/my_data.csv",
                         description = "Sample dataset",
                         author = "John Doe",
@@ -76,4 +77,5 @@ This function generates a metadata file describing a specified file stored in a 
                         repo = "https://github.com/repo",
                         doi = "10.1234/zenodo.1234567",
                         notes = "No additional notes")
+}
 }
