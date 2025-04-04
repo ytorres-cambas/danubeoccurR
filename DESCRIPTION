@@ -17,6 +17,7 @@ Depends:
     R (>= 2.10)
 Imports: 
     CoordinateCleaner,
+    countrycode,
     data.table,
     dplyr (>= 1.0.0),
     leaflet,
@@ -25,12 +26,16 @@ Imports:
     magrittr,
     miniUI,
     rgbif,
+    rfishbase,
     rvertnet,
     readxl,
     sf,
     shiny,
     specleanr,
-    terra
+    taxize,
+    terra,
+    tidygeocoder,
+    uuid
 Remotes:
   AnthonyBasooma/specleanr
 Suggests:
