@@ -1,7 +1,7 @@
 Package: danubeoccurR
 Title: Tools for Downloading, Cleaning, and Managing Fish Occurrence
     Records for the Danube River Basin
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Yusdiel", "Torres-Cambas", , "yusdiel.torres-cambas@igb-berlin.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2312-2329"))
@@ -26,6 +26,7 @@ Imports:
     miniUI,
     rgbif,
     rvertnet,
+    readxl,
     sf,
     shiny,
     specleanr,
