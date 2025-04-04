@@ -38,7 +38,6 @@ Imports:
     uuid
 Remotes:
   AnthonyBasooma/specleanr
-  glowabio/hydrographr
 Suggests:
     knitr,
     rmarkdown
